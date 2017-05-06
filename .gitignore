@@ -3,10 +3,20 @@
 *.lo
 *.o
 *.obj
+*.res
 
 # Precompiled Headers
 *.gch
 *.pch
+*.sdf
+*.opendb
+*.ilk
+*.pdb
+*.log
+*.tlog
+*.idb
+*.suo
+*.db
 
 # Compiled Dynamic libraries
 *.so
