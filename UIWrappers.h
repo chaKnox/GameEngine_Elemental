@@ -66,5 +66,18 @@ public:
     HRESULT LoadFromFile(LPSTR Path);
 };
 
-
+class Sprite
+{
+protected:
+    LPD3DXSPRITE m_Sprite;
+    LPDIRECT3DDEVICE9 m_pDevice;
+public:
+    Sprite(LPDIRECT3DDEVICE9 pDevice);
+    ~Sprite();
+    LPD3DXSPRITE GetSprite() const { return m_Sprite; }
+    void SetSprite(LPD3DXSPRITE Sprite) { m_Sprite = Sprite; }
+    LPDIRECT3DDEVICE9 GetDevice()const { return m_pDevice; }
+    void SetDevice(LPDIRECT3DDEVICE9 pDevice) { m_pDevice = pDevice; }
+    HRESULT DrawTexture(Texture* Tex);
+};
 #endif // !UIWRAPPERS_H_

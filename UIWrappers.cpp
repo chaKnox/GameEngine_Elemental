@@ -108,3 +108,34 @@ HRESULT Texture::LoadFromFile(LPSTR Path)
         m_Texture->Release();
     return D3DXCreateTextureFromFile(m_pDevice, Path, &m_Texture);
 }
+
+///----------------------------------------------------------------------Sprite Wrapper-------------------------------------------------------------------------------
+
+Sprite::Sprite(LPDIRECT3DDEVICE9 pDevice)
+{
+    SetDevice(pDevice);
+    D3DXCreateSprite(m_pDevice, &m_Sprite);
+}
+
+Sprite::~Sprite()
+{
+    if (m_Sprite != NULL)
+        SafeRelease(m_Sprite);
+}
+
+HRESULT Sprite::DrawTexture(Texture* Tex)
+{
+    if ((Tex->GetTexture() != NULL) && (m_Sprite != NULL))
+    {
+        D3DXMATRIX Mat;
+        D3DXMatrixTransformation2D(&Mat, NULL, 0, &Tex->GetScaling(), &Tex->GetRotationCenter(), Tex->GetRotation(), &Tex->GetTranslation());
+
+        m_Sprite->Begin(0);
+        m_Sprite->SetTransform(&Mat);
+        HRESULT Result = m_Sprite->Draw(Tex->GetTexture(), &Tex->GetRect(), NULL, NULL, 0xFFFFFFFF);
+        m_Sprite->End();
+        return Result;
+    }
+    else
+        return E_FAIL;
+}
