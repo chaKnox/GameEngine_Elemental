@@ -1,5 +1,6 @@
 #include <d3d9.h>
 #include <d3dx9.h>
+#include "UIWrappers.h"
 
 
 LRESULT WINAPI MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
