@@ -15,7 +15,6 @@
 *.log
 *.tlog
 *.idb
-*.suo
 *.db
 
 # Compiled Dynamic libraries
