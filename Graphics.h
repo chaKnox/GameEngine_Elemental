@@ -9,6 +9,7 @@ private:
 	int m_viideoCardMemrory;
 	char m_videoCardDexcription[128];
 	LPDIRECT3DDEVICE9 m_Device;
+    LPDIRECT3D9 m_D3DInterface;
 	D3DXMATRIX m_projectionMatrix;
 	D3DXMATRIX m_worldMatrix;
 	D3DXMATRIX m_orthoMatrix;
@@ -17,7 +18,7 @@ private:
 public:
     Graphics();
     ~Graphics();
-	bool Initialized(int, int, HWND);
+	bool Initialized(int height, int width, HWND hWnd);
 	void Shutdown();
 	bool Frame();
 
