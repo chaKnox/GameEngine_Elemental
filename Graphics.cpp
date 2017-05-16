@@ -1,15 +1,32 @@
 #include "Graphics.h"
-
-
+#include "UIWrappers.h"
 
 bool Graphics::Render()
 {
+    Texture* tex = new Texture(m_Device);
+    tex->LoadFromFile( "Cute_Kitty!.png" );
+    Sprite* sprt = new Sprite( m_Device );
+
+   //clear back buffer
+    m_Device->Clear( 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB( 255, 255, 255 ), 1.0F, 0 );
+
+    //begin the scene
+    if( SUCCEEDED( m_Device->BeginScene( ) ) )
+    {
+        sprt->DrawTexture( tex );
+
+        //end the scene
+        m_Device->EndScene( );
+    }
+    //present the back buffer contents to the display
+    m_Device->Present( NULL, NULL, NULL, NULL );
 	return false;
 }
 
 Graphics::Graphics()
 {
-
+    m_Device = NULL;
+    m_D3DInterface = NULL;
 }
 
 
@@ -17,9 +34,52 @@ Graphics::~Graphics()
 {
 }
 
-bool Graphics::Initialized(int height, int width, HWND hWnd)
+bool Graphics::Initialized(int height, int width, HINSTANCE hInstance)
 {
-    m_D3DInterface = Direct3DCreate9(D3D_SDK_VERSION);
+    WNDCLASS wc;
+
+    wc.style = CS_HREDRAW | CS_VREDRAW;
+    wc.lpfnWndProc = (WNDPROC)D3D::MsgProc;
+    wc.cbClsExtra = 0;
+    wc.cbWndExtra = 0;
+    wc.hInstance = hInstance;
+    wc.hIcon = NULL;
+    wc.hCursor = LoadCursor(0, IDC_ARROW);
+    wc.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+    wc.lpszMenuName = 0;
+    wc.lpszClassName = "D3DApp";
+
+    if (!RegisterClass(&wc))
+        return false;
+
+
+    HWND hWnd = CreateWindow("D3DApp", "The Camp", WS_OVERLAPPEDWINDOW | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SIZEBOX, 100, 100, width, height, 0, 0, hInstance, 0);
+    if (!hWnd)
+        return false;
+
+    ShowWindow(hWnd, SW_SHOW);
+    UpdateWindow(hWnd);
+
+
+    HRESULT hr = 0;
+
+
+
+    D3DCAPS9 caps;
+
+    m_D3DInterface = Direct3DCreate9( D3D_SDK_VERSION );
+
+    m_D3DInterface->GetDeviceCaps( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &caps );
+
+    if( !m_D3DInterface )
+        return false;
+
+    int vp = 0;
+    if (caps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
+        vp = D3DCREATE_HARDWARE_VERTEXPROCESSING;
+    else
+        vp = D3DCREATE_SOFTWARE_VERTEXPROCESSING;
+
 
     D3DPRESENT_PARAMETERS d3dpp; //create a struct ot hold device ingormation
 
@@ -39,9 +99,20 @@ bool Graphics::Initialized(int height, int width, HWND hWnd)
     d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
     d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 
-    m_D3DInterface->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &m_Device);
+    hr = m_D3DInterface->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, vp, &d3dpp, &m_Device);
 
-	return false;
+    if (FAILED(hr)) {
+        d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
+
+        hr = m_D3DInterface->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, vp, &d3dpp, &m_Device);
+
+        if (FAILED(hr)) {
+            m_D3DInterface->Release();
+            return false;
+        }
+    }
+
+	return TRUE;
 }
 
 void Graphics::Shutdown()

@@ -70,14 +70,24 @@ void Surface::Render(void)
 Texture::Texture(LPDIRECT3DDEVICE9 pDevice)
 {
     D3DXVECTOR2 Vec;
+    D3DXVECTOR2 VecS ;
     Vec.x = 0;
     Vec.y = 0;
+    VecS.x = 1;
+    VecS.y = 1;
+
     SetDevice(pDevice);
     SetTexture(NULL);
     SetRotation(0.0f);
     SetRotationCenter(Vec);
-    SetScaling(Vec);
+    SetScaling(VecS);
     SetTranslation(Vec);
+    RECT rect;
+    rect.bottom = 500;
+    rect.left = 0;
+    rect.right = 500;
+    rect.top = 0;
+    SetRect( rect );
 }
 
 Texture::Texture(LPDIRECT3DDEVICE9 pDevice, LPDIRECT3DTEXTURE9 Texture, D3DXVECTOR2 RotationCenter, FLOAT Rotation, D3DXVECTOR2 Translation, D3DXVECTOR2 Scaling, RECT SrcRect)

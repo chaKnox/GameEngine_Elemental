@@ -80,3 +80,96 @@ HRESULT Keyboard::Update()
     }
     return S_OK;
 }
+///----------------------------------------------------------------Mouse-------------------------------------------------------------------------------
+Mouse::Mouse( LPDIRECT3DDEVICE9 pDevice, LPDIRECTINPUT8 pInput, HWND hWnd,
+              bool Exclusive, D3DDISPLAYMODE Mode )
+{
+    m_Device = NULL;
+    //Initial cursor position
+    m_iX = 0;
+    m_iY = 0;
+
+    if( pInput&&pDevice )
+    {
+        HRESULT Result = E_FAIL;
+        m_Device = pDevice;
+        Result = pInput->CreateDevice( GUID_SysMouse, &m_pInputDevice, NULL );
+        if( FAILED( Result ) )
+            return;
+        Result = m_pInputDevice->SetDataFormat( &c_dfDIMouse );
+        if( FAILED( Result ) )
+        {
+            SafeRelease( m_pInputDevice );
+            return;
+        }
+        if( Exclusive )
+        {
+            Result = m_pInputDevice->SetCooperativeLevel( hWnd, DISCL_EXCLUSIVE | DISCL_NOWINKEY | DISCL_FOREGROUND );
+        }
+        else
+        {
+            Result = m_pInputDevice->SetCooperativeLevel( hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND );
+        }
+        if( FAILED( Result ) )
+        {
+            SafeRelease( m_pInputDevice );
+            return;
+        }
+        ZeroMemory( (void*)&Mode, sizeof( &Mode ) );
+        m_Device->GetDisplayMode( 0, &Mode );
+        m_Changed = false;
+        m_Buttons = false;
+    }
+}
+
+Mouse::~Mouse( )
+{
+    if( m_pInputDevice )
+    {
+        m_pInputDevice->Unacquire( );
+        SafeRelease( m_pInputDevice );
+    }
+}
+
+HRESULT Mouse::Update( )
+{
+    return E_NOTIMPL;
+}
+
+LONG Mouse::GetXPos( )
+{
+    return 0;
+}
+
+LONG Mouse::GetYPos( )
+{
+    return 0;
+}
+
+bool Mouse::IsButtonPressed( int Button )
+{
+    return false;
+}
+
+HRESULT Mouse::SetCursorImage( )
+{
+    return E_NOTIMPL;
+}
+
+HRESULT Mouse::SetMouseCursor( char * FilePath, UINT x, UINT y, int Type )
+{
+    return E_NOTIMPL;
+}
+
+void Mouse::SetCursor( int Type )
+{
+}
+
+void Mouse::SetCursorPosition( int x, int y )
+{
+}
+
+HRESULT Mouse::SetCursorVisible( bool Show )
+{
+    return E_NOTIMPL;
+}
