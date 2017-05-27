@@ -6,6 +6,7 @@
 #include <d3dx9.h>
 #include <dinput.h>
 #include "UIWrappers.h"
+#include <vector>
 
 //template <class T>
 //void SafeRelease(T*& pT)
@@ -50,7 +51,8 @@ class Mouse
 {
     Texture* m_Tex;
     Sprite* Sprite;
-    RECT pos;
+    RECT pos[8];
+	IDirect3DSurface9* m_Surf;
     LPDIRECTINPUTDEVICE8 m_pInputDevice;
     LPDIRECT3DDEVICE9 m_Device;
     DIMOUSESTATE m_State;
@@ -58,15 +60,15 @@ class Mouse
     LONG m_iY;
     bool m_Changed;
     bool m_Buttons;
+	int m_Type;
 public:
     Mouse( LPDIRECT3DDEVICE9 pDevice, LPDIRECTINPUT8 pInput, HWND hWnd,
-           bool Exclusive, D3DDISPLAYMODE Mode );
+           bool Exclusive/*, D3DDISPLAYMODE Mode */);
     ~Mouse( );
     HRESULT Update( );
     LONG GetXPos( );
     LONG GetYPos( );
     bool IsButtonPressed( int Button );
-    HRESULT SetCursorImage( );
     HRESULT SetMouseCursor( char* FilePath,UINT x, UINT y,int Type );
     void SetCursor( int Type );
     void SetCursorPosition( int x, int y );

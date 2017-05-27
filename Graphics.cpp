@@ -38,7 +38,7 @@ bool Graphics::Initialized(int height, int width, HINSTANCE hInstance)
 {
     WNDCLASS wc;
 
-    wc.style = CS_HREDRAW | CS_VREDRAW;
+    wc.style = CS_HREDRAW | CS_VREDRAW ;
     wc.lpfnWndProc = (WNDPROC)D3D::MsgProc;
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
@@ -53,7 +53,7 @@ bool Graphics::Initialized(int height, int width, HINSTANCE hInstance)
         return false;
 
 
-    HWND hWnd = CreateWindow("D3DApp", "The Camp", WS_OVERLAPPEDWINDOW | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SIZEBOX, 100, 100, width, height, 0, 0, hInstance, 0);
+    HWND hWnd = CreateWindow("D3DApp", "Omni Kitty", WS_OVERLAPPEDWINDOW | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SIZEBOX , 100, 100, width, height, 0, 0, hInstance, 0);
     if (!hWnd)
         return false;
 
@@ -112,6 +112,9 @@ bool Graphics::Initialized(int height, int width, HINSTANCE hInstance)
         }
     }
 
+	m_Input = new Input(hInstance, hWnd);
+	m_Keyboard = m_Input->CreateKeyboard();
+	m_Mouse = m_Input->CreateMouse(m_Device, false);
 	return TRUE;
 }
 
@@ -122,6 +125,10 @@ void Graphics::Shutdown()
         m_Device->Release();
         m_Device = 0;
     }
+	if (m_Keyboard)
+		delete m_Keyboard;
+	if (m_Mouse)
+		delete m_Mouse;
 }
 
 bool Graphics::Frame()

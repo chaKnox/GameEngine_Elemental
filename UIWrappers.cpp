@@ -90,15 +90,15 @@ Texture::Texture(LPDIRECT3DDEVICE9 pDevice)
     SetRect( rect );
 }
 
-Texture::Texture(LPDIRECT3DDEVICE9 pDevice, LPDIRECT3DTEXTURE9 Texture, D3DXVECTOR2 RotationCenter, FLOAT Rotation, D3DXVECTOR2 Translation, D3DXVECTOR2 Scaling, RECT SrcRect)
+Texture::Texture(LPDIRECT3DDEVICE9 pDevice, LPSTR Path, D3DXVECTOR2 RotationCenter, FLOAT Rotation, D3DXVECTOR2 Translation, D3DXVECTOR2 Scaling, RECT SrcRect)
 {
     SetDevice(pDevice);
-    InitTexture( Texture,  RotationCenter,  Rotation,  Translation,  Scaling, SrcRect);
+	LoadFromFile(Path);
+    InitTexture( RotationCenter,  Rotation,  Translation,  Scaling, SrcRect);
 }
 
-void Texture::InitTexture(LPDIRECT3DTEXTURE9 Texture, D3DXVECTOR2 RotationCenter, FLOAT Rotation, D3DXVECTOR2 Translation, D3DXVECTOR2 Scaling, RECT SrcRect)
+void Texture::InitTexture( D3DXVECTOR2 RotationCenter, FLOAT Rotation, D3DXVECTOR2 Translation, D3DXVECTOR2 Scaling, RECT SrcRect)
 {
-    SetTexture(Texture);
     SetRotation(Rotation);
     SetRotationCenter(RotationCenter);
     SetScaling(Scaling);

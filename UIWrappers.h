@@ -46,8 +46,8 @@ protected:
     RECT m_SrcRect;
 public:
     Texture(LPDIRECT3DDEVICE9 pDevice);
-    Texture(LPDIRECT3DDEVICE9 pDevice, LPDIRECT3DTEXTURE9 Texture, D3DXVECTOR2 RotationCenter, FLOAT Rotation, D3DXVECTOR2 Translation, D3DXVECTOR2 Scaling, RECT SrcRect);
-    void InitTexture(LPDIRECT3DTEXTURE9 Texture, D3DXVECTOR2 RotationCenter, FLOAT Rotation, D3DXVECTOR2 Translation, D3DXVECTOR2 Scaling, RECT SrcRect);
+    Texture(LPDIRECT3DDEVICE9 pDevice, LPSTR Path,  D3DXVECTOR2 RotationCenter, FLOAT Rotation, D3DXVECTOR2 Translation, D3DXVECTOR2 Scaling, RECT SrcRect);
+    void InitTexture( D3DXVECTOR2 RotationCenter, FLOAT Rotation, D3DXVECTOR2 Translation, D3DXVECTOR2 Scaling, RECT SrcRect);
     ~Texture();
     LPDIRECT3DTEXTURE9 GetTexture()const { return m_Texture; }
     void SetTexture(LPDIRECT3DTEXTURE9 Texture) { m_Texture = Texture; }

@@ -1,7 +1,7 @@
 #pragma once
 #include <d3d9.h>
 #include <d3dx9.h>
-
+#include "Input.h"
 #define screenWidth 1600
 #define screenHeight 900
 
@@ -26,7 +26,7 @@ namespace D3D {
     D3DLIGHT9 InitPointLight(D3DXVECTOR3* position, D3DXCOLOR* color);
     D3DLIGHT9 InitSpotLight(D3DXVECTOR3* position, D3DXVECTOR3* direction, D3DXCOLOR* color);
 
-    IDirect3DTexture9 * LoadTexture(char * fileName);
+   // IDirect3DTexture9 * LoadTexture(char * fileName);
 
 
 
@@ -101,8 +101,10 @@ private:
 	D3DXMATRIX m_projectionMatrix;
 	D3DXMATRIX m_worldMatrix;
 	D3DXMATRIX m_orthoMatrix;
-
+	Input * m_Input;
 public:
+	Keyboard* m_Keyboard;
+	Mouse* m_Mouse;
     Graphics();
     ~Graphics();
 	bool Initialized(int height, int width, HINSTANCE hInstance);

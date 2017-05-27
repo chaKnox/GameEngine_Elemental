@@ -1,5 +1,6 @@
 #include "Input.h"
-
+#include <string>
+#define KEYDOWN(name,key) (name[key] & 0x80)
 
 
 
@@ -19,12 +20,23 @@ Input::~Input()
 
 Keyboard * Input::CreateKeyboard()
 {
-    return nullptr;
+	Keyboard* l_keyboard = NULL;
+
+	if (m_pInput)
+	{
+		l_keyboard = new Keyboard(m_pInput, m_hWnd);
+	}
+    return l_keyboard;
 }
 
 Mouse * Input::CreateMouse(LPDIRECT3DDEVICE9 pDevice, bool Exclusive)
 {
-    return nullptr;
+	Mouse* l_mouse = NULL;
+	if (m_pInput)
+	{
+		l_mouse = new Mouse(pDevice, m_pInput, m_hWnd, Exclusive);
+	}
+    return l_mouse;
 }
 ///----------------------------------------------------------------------Keyboard--------------------------------------------------------------------
 Keyboard::Keyboard(LPDIRECTINPUT8 pInput, HWND hWnd)
@@ -82,7 +94,7 @@ HRESULT Keyboard::Update()
 }
 ///----------------------------------------------------------------Mouse-------------------------------------------------------------------------------
 Mouse::Mouse( LPDIRECT3DDEVICE9 pDevice, LPDIRECTINPUT8 pInput, HWND hWnd,
-              bool Exclusive, D3DDISPLAYMODE Mode )
+              bool Exclusive/*, D3DDISPLAYMODE Mode*/ )
 {
     m_Device = NULL;
     //Initial cursor position
@@ -115,11 +127,21 @@ Mouse::Mouse( LPDIRECT3DDEVICE9 pDevice, LPDIRECTINPUT8 pInput, HWND hWnd,
             SafeRelease( m_pInputDevice );
             return;
         }
-        ZeroMemory( (void*)&Mode, sizeof( &Mode ) );
-        m_Device->GetDisplayMode( 0, &Mode );
+        //ZeroMemory( (void*)&Mode, sizeof( &Mode ) );
+        //m_Device->GetDisplayMode( 0, &Mode );
         m_Changed = false;
         m_Buttons = false;
     }
+
+	ZeroMemory((void*)&pos, sizeof(&pos));
+	for (int i = 0; i < sizeof(pos); i++)
+	{
+		pos[i].top = 0;
+		pos[i].left += pos[i].right;
+		pos[i].bottom += 16;
+		pos[i].right += 16;
+	}
+	
 }
 
 Mouse::~Mouse( )
@@ -133,43 +155,73 @@ Mouse::~Mouse( )
 
 HRESULT Mouse::Update( )
 {
-    return E_NOTIMPL;
+	HRESULT Result = E_FAIL;
+	long OldX, OldY;
+	bool Pressed = this->IsButtonPressed(0);
+	m_Changed = false;
+
+	if (m_pInputDevice)
+	{
+		Result = m_pInputDevice->Acquire();
+		Result = m_pInputDevice->Poll();
+		if (FAILED(Result))
+			return Result;
+		Result = m_pInputDevice->GetDeviceState(sizeof(DIMOUSESTATE), (void*)&m_State);
+		if (FAILED(Result))
+			return Result;
+		if (this->IsButtonPressed(0) != Pressed)
+			m_Buttons = true;
+		else
+			m_Buttons = false;
+		m_iX += m_State.lX;
+		m_iY += m_State.lY;
+	}
+    return Result;
 }
 
 LONG Mouse::GetXPos( )
 {
-    return 0;
+    return m_iX;
 }
 
 LONG Mouse::GetYPos( )
 {
-    return 0;
+    return m_iY;
 }
 
 bool Mouse::IsButtonPressed( int Button )
 {
-    return false;
+	if (KEYDOWN(m_State.rgbButtons, Button))
+		return true;
+	else
+		return false;
 }
 
-HRESULT Mouse::SetCursorImage( )
-{
-    return E_NOTIMPL;
-}
 
 HRESULT Mouse::SetMouseCursor( char * FilePath, UINT x, UINT y, int Type )
 {
-    return E_NOTIMPL;
+	HRESULT Result;
+	//create mouse cursor
+	m_Tex = new Texture(m_Device);
+	m_Tex->LoadFromFile("cursor_sprite.png");
+	Result = m_Tex->GetTexture()->GetSurfaceLevel(0, &m_Surf);
+	m_Device->SetCursorProperties(x, y, m_Surf);
+    return Result;
 }
 
 void Mouse::SetCursor( int Type )
 {
+	m_Tex->SetRect(pos[Type]);
+	m_Tex->GetTexture()->GetSurfaceLevel(0, &m_Surf);
+	m_Device->SetCursorProperties(m_iX, m_iY, m_Surf);
 }
 
 void Mouse::SetCursorPosition( int x, int y )
 {
+	m_Device->SetCursorPosition(x, y, 0);
 }
 
 HRESULT Mouse::SetCursorVisible( bool Show )
 {
-    return E_NOTIMPL;
+    return m_Device->ShowCursor(Show);
 }
