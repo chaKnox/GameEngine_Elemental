@@ -20,6 +20,7 @@ protected:
     LPDIRECT3DSURFACE9 m_Surface;
     Surface* m_BackBuffer;
     LPDIRECT3DDEVICE9 m_pDevice;
+    RECT* m_SourceRect;
 public:
     Surface(LPDIRECT3DDEVICE9 pDevice);
     ~Surface();

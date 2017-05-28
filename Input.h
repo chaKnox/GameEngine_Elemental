@@ -49,10 +49,8 @@ public:
 ///----------------------------------------------------------Mouse-------------------------------------------------------------------
 class Mouse
 {
-    Texture* m_Tex;
-    Sprite* Sprite;
     RECT pos[8];
-	IDirect3DSurface9* m_Surf;
+	Surface* m_Surf;
     LPDIRECTINPUTDEVICE8 m_pInputDevice;
     LPDIRECT3DDEVICE9 m_Device;
     DIMOUSESTATE m_State;

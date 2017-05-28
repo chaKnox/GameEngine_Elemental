@@ -131,15 +131,16 @@ Mouse::Mouse( LPDIRECT3DDEVICE9 pDevice, LPDIRECTINPUT8 pInput, HWND hWnd,
         //m_Device->GetDisplayMode( 0, &Mode );
         m_Changed = false;
         m_Buttons = false;
+        m_Surf = NULL;
     }
-
+    int temp = 0;
 	ZeroMemory((void*)&pos, sizeof(&pos));
 	for (int i = 0; i < sizeof(pos); i++)
 	{
 		pos[i].top = 0;
-		pos[i].left += pos[i].right;
-		pos[i].bottom += 16;
-		pos[i].right += 16;
+        pos[ i ].right = temp+16;
+        pos[i].left = 0;
+		pos[i].bottom = temp+16;
 	}
 	
 }
@@ -151,6 +152,7 @@ Mouse::~Mouse( )
         m_pInputDevice->Unacquire( );
         SafeRelease( m_pInputDevice );
     }
+    SafeRelease( m_Surf );
 }
 
 HRESULT Mouse::Update( )
@@ -202,16 +204,16 @@ HRESULT Mouse::SetMouseCursor( char * FilePath, UINT x, UINT y, int Type )
 {
 	HRESULT Result;
 	//create mouse cursor
-	m_Tex = new Texture(m_Device);
-	m_Tex->LoadFromFile("cursor_sprite.png");
-	Result = m_Tex->GetTexture()->GetSurfaceLevel(0, &m_Surf);
-	m_Device->SetCursorProperties(x, y, m_Surf);
+    m_Surf = new Surface( m_Device );
+    Result = m_Surf->LoadFromFile("cursor_sprite.png");
+    m_Surf->UpdateSurface( m_Surf, &pos[ 0 ], x, y );
+	m_Device->SetCursorProperties(x, y, m_Surf->GetSurface());
     return Result;
 }
 
 void Mouse::SetCursor( int Type )
 {
-	m_Tex->SetRect(pos[Type]);
+	m_Surf->SetRect(pos[Type]);
 	m_Tex->GetTexture()->GetSurfaceLevel(0, &m_Surf);
 	m_Device->SetCursorProperties(m_iX, m_iY, m_Surf);
 }

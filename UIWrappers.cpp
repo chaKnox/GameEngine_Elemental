@@ -5,6 +5,7 @@ Surface::Surface(LPDIRECT3DDEVICE9 pDevice)
     this->SetDevice(pDevice);
     this->SetSurface(NULL);
     m_BackBuffer = new Surface(pDevice);
+    m_SourceRect = NULL;
 }
 
 Surface::~Surface()
@@ -50,13 +51,14 @@ HRESULT Surface::MakeBackBuffer(void)
 
 HRESULT Surface::UpdateSurface(Surface * Source, RECT * pSourceRect, int x, int y)
 {
+    m_SourceRect = pSourceRect;
     if ((m_pDevice) && (Source))
     {
         POINT Point;
         Point.x = x;
         Point.y = y;
 
-        return m_pDevice->UpdateSurface(Source->GetSurface(), pSourceRect, m_Surface, NULL);
+        return m_pDevice->UpdateSurface(Source->GetSurface(), pSourceRect, m_Surface, &Point);
     }
     else 
         return E_FAIL;
@@ -64,7 +66,7 @@ HRESULT Surface::UpdateSurface(Surface * Source, RECT * pSourceRect, int x, int 
 
 void Surface::Render(void)
 {
-    m_BackBuffer->UpdateSurface(this, NULL, 0, 0);
+    m_BackBuffer->UpdateSurface(this, m_SourceRect, 0, 0);
 }
 ///---------------------------------------------------------------------------------Texture wrapper-----------------------------------------------------------------------
 Texture::Texture(LPDIRECT3DDEVICE9 pDevice)
