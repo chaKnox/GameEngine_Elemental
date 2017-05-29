@@ -22,7 +22,8 @@ protected:
     LPDIRECT3DDEVICE9 m_pDevice;
     RECT* m_SourceRect;
 public:
-    Surface(LPDIRECT3DDEVICE9 pDevice);
+	D3DXIMAGE_INFO Info;
+	Surface(LPDIRECT3DDEVICE9 pDevice);
     ~Surface();
     LPDIRECT3DSURFACE9 GetSurface() const{ return m_Surface; }
     void SetSurface(LPDIRECT3DSURFACE9 Surf) { m_Surface = Surf; }
@@ -32,6 +33,7 @@ public:
     HRESULT LoadFromFile(LPSTR Path);
     HRESULT MakeBackBuffer(void);
     HRESULT UpdateSurface(Surface* Source, RECT* pSourceRect, int x, int y);
+	HRESULT CopySurface(IDirect3DSurface9* CopyTo, RECT CopyFromRect, int x, int y);
     void Render(void);
 };
 

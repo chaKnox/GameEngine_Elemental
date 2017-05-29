@@ -51,6 +51,7 @@ class Mouse
 {
     RECT pos[8];
 	Surface* m_Surf;
+	IDirect3DSurface9* m_Cursor;
     LPDIRECTINPUTDEVICE8 m_pInputDevice;
     LPDIRECT3DDEVICE9 m_Device;
     DIMOUSESTATE m_State;
@@ -68,7 +69,7 @@ public:
     LONG GetYPos( );
     bool IsButtonPressed( int Button );
     HRESULT SetMouseCursor( char* FilePath,UINT x, UINT y,int Type );
-    void SetCursor( int Type );
+    void SetCursorImage( int Type );
     void SetCursorPosition( int x, int y );
     HRESULT SetCursorVisible( bool Show );
 

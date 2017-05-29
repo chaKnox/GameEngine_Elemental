@@ -4,7 +4,7 @@ Surface::Surface(LPDIRECT3DDEVICE9 pDevice)
 {
     this->SetDevice(pDevice);
     this->SetSurface(NULL);
-    m_BackBuffer = new Surface(pDevice);
+    //m_BackBuffer = new Surface(pDevice);
     m_SourceRect = NULL;
 }
 
@@ -23,7 +23,6 @@ HRESULT Surface::CreateSurface(UINT Width, UINT Height, D3DFORMAT Format, D3DPOO
 HRESULT Surface::LoadFromFile(LPSTR Path)
 {
     HRESULT Result = E_FAIL;
-    D3DXIMAGE_INFO Info;
     ZeroMemory(&Info, sizeof(D3DXIMAGE_INFO));
 
     if (SUCCEEDED(D3DXGetImageInfoFromFile(Path, &Info)))
@@ -62,6 +61,18 @@ HRESULT Surface::UpdateSurface(Surface * Source, RECT * pSourceRect, int x, int 
     }
     else 
         return E_FAIL;
+}
+
+HRESULT Surface::CopySurface(IDirect3DSurface9 * CopyTo, RECT CopyFromRect, int x, int y)
+{
+	if ((m_pDevice) && (CopyTo))
+	{
+		POINT l_Point;
+		l_Point.x = x;
+		l_Point.y = y;
+		return m_pDevice->UpdateSurface(m_Surface, &CopyFromRect, CopyTo, &l_Point);
+	}
+	return E_FAIL;
 }
 
 void Surface::Render(void)
