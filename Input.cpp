@@ -94,20 +94,21 @@ HRESULT Keyboard::Update()
 }
 ///----------------------------------------------------------------Mouse-------------------------------------------------------------------------------
 Mouse::Mouse( LPDIRECT3DDEVICE9 pDevice, LPDIRECTINPUT8 pInput, HWND hWnd,
-              bool Exclusive/*, D3DDISPLAYMODE Mode*/ )
+              bool Exclusive/*, D3DDISPLAYMODE Mode*/ ): m_pInputDevice( NULL )
 {
     m_Device = NULL;
     //Initial cursor position
     m_iX = 0;
     m_iY = 0;
-	int temp = 0;
-	for (int i = 0; i < sizeof(pos); i++)
-	{
-		pos[i].top = 0;
-		pos[i].left = 0;
-		pos[i].right = temp + 16;
-		pos[i].bottom = temp + 16;
-	}
+	//int temp = 0;
+    //ZeroMemory( (void*)&pos, sizeof( &pos ) );
+	//for (int i = 0; i < sizeof(pos); i++)
+	//{
+	//	pos[i].top = 0;
+	//	pos[i].left = 0;
+	//	pos[i].right += temp + 16;
+	//	pos[i].bottom = 16;
+	//}
 
     if( pInput&&pDevice )
     {
@@ -135,14 +136,22 @@ Mouse::Mouse( LPDIRECT3DDEVICE9 pDevice, LPDIRECTINPUT8 pInput, HWND hWnd,
             SafeRelease( m_pInputDevice );
             return;
         }
-		m_Surf = new Surface(m_Device);
-		SetMouseCursor("cursor_sprite.png", 0, 0, 0);
+		//m_Surf = new Surface(m_Device);
+        //Image infor structure
+        D3DXIMAGE_INFO ImageInfo;
+        //load image iformation
+        D3DXGetImageInfoFromFile( "cursor.png", &ImageInfo );
+        m_Device->CreateOffscreenPlainSurface( ImageInfo.Height, ImageInfo.Width, ImageInfo.Format, D3DPOOL_DEFAULT, &m_Cursor, NULL );
+        D3DXLoadSurfaceFromFile( m_Cursor, NULL, NULL, "cursor.png", NULL, D3DX_FILTER_NONE, D3DCOLOR_XRGB( 255, 255, 255 ), &ImageInfo );
+		//SetMouseCursor("cursor.png", 0, 0, 0);
+        m_Device->SetCursorProperties( 0, 0, m_Cursor );
+        m_Device->SetCursorPosition( 0, 0, D3DCURSOR_IMMEDIATE_UPDATE );
+        //m_Device->ShowCursor( true );
 		//ZeroMemory( (void*)&Mode, sizeof( &Mode ) );
         //m_Device->GetDisplayMode( 0, &Mode );
         m_Changed = false;
         m_Buttons = false;
     }
-	ZeroMemory((void*)&pos, sizeof(&pos));
 	
 }
 
@@ -154,7 +163,7 @@ Mouse::~Mouse( )
         SafeRelease( m_pInputDevice );
     }
 	SafeRelease(m_Cursor);
-	delete m_Surf;
+	//delete m_Surf;
 }
 
 HRESULT Mouse::Update( )
@@ -166,11 +175,15 @@ HRESULT Mouse::Update( )
 
 	if (m_pInputDevice)
 	{
-		Result = m_pInputDevice->Acquire();
+        if( SUCCEEDED( m_pInputDevice->Acquire( ) ) )
+        {
+            Result = m_pInputDevice->GetDeviceState( sizeof( DIMOUSESTATE ), (void*)&m_State );
+            if( FAILED( Result ) )
+                return Result;
+        }
+        else
+            return Result;
 		Result = m_pInputDevice->Poll();
-		if (FAILED(Result))
-			return Result;
-		Result = m_pInputDevice->GetDeviceState(sizeof(DIMOUSESTATE), (void*)&m_State);
 		if (FAILED(Result))
 			return Result;
 		if (this->IsButtonPressed(0) != Pressed)
@@ -204,18 +217,18 @@ bool Mouse::IsButtonPressed( int Button )
 
 HRESULT Mouse::SetMouseCursor( char * FilePath, UINT x, UINT y, int Type )
 {
-	HRESULT Result;
+	//HRESULT Result;
 	//create mouse cursor
-    Result = m_Surf->LoadFromFile(FilePath);
-	m_Device->CreateOffscreenPlainSurface(16, 16, m_Surf->Info.Format, D3DPOOL_DEFAULT, &m_Cursor, NULL);
-	m_Surf->CopySurface( m_Cursor, pos[ Type ], x, y );
-	m_Device->SetCursorProperties(x, y, m_Cursor);
-    return Result;
+    //Result = m_Surf->LoadFromFile(FilePath);
+	//m_Device->CreateOffscreenPlainSurface(16, 16, m_Surf->Info.Format, D3DPOOL_DEFAULT, &m_Cursor, NULL);
+	//m_Surf->CopySurface( m_Cursor, pos[ Type ], x, y );
+	//m_Device->SetCursorProperties(x, y, m_Cursor);
+    return E_NOTIMPL;
 }
 
 void Mouse::SetCursorImage( int Type )
 {
-	m_Surf->CopySurface(m_Cursor, pos[Type], m_iX, m_iY);
+	//m_Surf->CopySurface(m_Cursor, pos[Type], m_iX, m_iY);
 	m_Device->SetCursorProperties(m_iX, m_iX, m_Cursor);
 }
 

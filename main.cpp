@@ -43,6 +43,10 @@ LRESULT WINAPI D3D::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         return 0;
     case WM_PAINT:
         return 0;
+    case WM_SETCURSOR:
+        SetCursor( NULL );
+        graphics.GetDevice( )->ShowCursor( true );
+        return 0;
     }
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }

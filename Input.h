@@ -7,7 +7,7 @@
 #include <dinput.h>
 #include "UIWrappers.h"
 #include <vector>
-
+//#include "Graphics.h"
 //template <class T>
 //void SafeRelease(T*& pT)
 //{
@@ -50,7 +50,7 @@ public:
 class Mouse
 {
     RECT pos[8];
-	Surface* m_Surf;
+	//Surface* m_Surf;
 	IDirect3DSurface9* m_Cursor;
     LPDIRECTINPUTDEVICE8 m_pInputDevice;
     LPDIRECT3DDEVICE9 m_Device;

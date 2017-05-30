@@ -3,9 +3,8 @@
 
 bool Graphics::Render()
 {
-    Texture* tex = new Texture(m_Device);
-    tex->LoadFromFile( "Cute_Kitty!.png" );
-    Sprite* sprt = new Sprite( m_Device );
+    m_Mouse->Update( );
+    m_Keyboard->Update( );
 
    //clear back buffer
     m_Device->Clear( 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB( 255, 255, 255 ), 1.0F, 0 );
@@ -14,7 +13,6 @@ bool Graphics::Render()
     if( SUCCEEDED( m_Device->BeginScene( ) ) )
     {
         sprt->DrawTexture( tex );
-
         //end the scene
         m_Device->EndScene( );
     }
@@ -27,6 +25,8 @@ Graphics::Graphics()
 {
     m_Device = NULL;
     m_D3DInterface = NULL;
+    tex = NULL;
+    sprt = NULL;
 }
 
 
@@ -115,7 +115,10 @@ bool Graphics::Initialized(int height, int width, HINSTANCE hInstance)
 	m_Input = new Input(hInstance, hWnd);
 	m_Keyboard = m_Input->CreateKeyboard();
 	m_Mouse = m_Input->CreateMouse(m_Device, false);
-	return TRUE;
+    tex = new Texture( m_Device );
+    tex->LoadFromFile( "Cute_Kitty!.png" );
+    sprt = new Sprite( m_Device );
+    return TRUE;
 }
 
 void Graphics::Shutdown()
@@ -129,6 +132,10 @@ void Graphics::Shutdown()
 		delete m_Keyboard;
 	if (m_Mouse)
 		delete m_Mouse;
+    if( tex )
+        delete tex;
+    if( sprt )
+        delete sprt;
 }
 
 bool Graphics::Frame()

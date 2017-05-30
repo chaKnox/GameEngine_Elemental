@@ -102,6 +102,8 @@ private:
 	D3DXMATRIX m_worldMatrix;
 	D3DXMATRIX m_orthoMatrix;
 	Input * m_Input;
+    Sprite* sprt;
+    Texture* tex;
 public:
 	Keyboard* m_Keyboard;
 	Mouse* m_Mouse;
