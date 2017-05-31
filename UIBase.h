@@ -16,6 +16,7 @@ protected:
     Texture* m_Texture;//the texture
     Sprite* m_Sprite;//used to draw the texture
     std::vector<UIBase*> m_vControl;//a vector of contols, the zero position is a pointer to the parent control
+	int m_ChildCount;
     int m_thisVecPos;//the position of this instance in it's parents control
     bool m_Focus;//is this the focus
     UIBase* m_pUIFocus;//this is a pointer to the contol that has the keyboard focus
@@ -32,7 +33,7 @@ public:
     DWORD GetHeight( void ) { return m_Height; }
     void SetWidth( DWORD newWidth ) { m_Width = newWidth; }
     void SetHeight( DWORD newHeight ) { m_Height = newHeight; }
-
+	void SetWidthHeight(DWORD width, DWORD height) { m_Width = width; m_Height = height; }
     D3DXVECTOR2* GetPosition( void ) { return &m_Position; }
     void SetPosition( D3DXVECTOR2 setPosition ) { m_Position = setPosition; }
     void GetAbsolutePosition( D3DXVECTOR2* Position );
@@ -50,9 +51,10 @@ public:
     bool PostMessage( UINT msg, WPARAM wParam, LPARAM lParam, void* Data );
     UIBase* PostToAll( UINT msg, WPARAM wParam, LPARAM lParam, void* Data );
 
-    UIBase* GetParentControl( void ) { return m_vControl[ 0 ]; }
-    UIBase( UIBase* parent, int vecPos );
-    UIBase* AddChildControl( UIBase* child ) { m_vControl.push_back( child ); }
+	UIBase* GetThis() { return this; }
+	UIBase* GetParentControl( void ) { return m_vControl[ 0 ]; }
+	UIBase( UIBase* parent, int vecPos );
+	UIBase* AddChildControl(UIBase* child) { m_vControl.push_back(child); }
     ~UIBase( );
 };
 

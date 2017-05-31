@@ -120,13 +120,17 @@
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="UIBase.cpp" />
+    <ClCompile Include="UIControls.cpp" />
     <ClCompile Include="UIWrappers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="MainMenu.h" />
     <ClInclude Include="UIBase.h" />
+    <ClInclude Include="UIControls.h" />
     <ClInclude Include="UIWrappers.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

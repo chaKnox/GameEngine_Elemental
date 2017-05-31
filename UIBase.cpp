@@ -100,6 +100,7 @@ UIBase * UIBase::PostToAll( UINT msg, WPARAM wParam, LPARAM lParam, void * Data 
 
 UIBase::UIBase( UIBase * parent, int vecPos )
 {
+	m_ChildCount = 0;
     m_vControl.clear( );
     m_vControl.push_back( parent );
     m_thisVecPos = vecPos;
