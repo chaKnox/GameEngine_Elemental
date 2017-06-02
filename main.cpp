@@ -14,7 +14,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT)
 
     //create teh applications window
     //HWND hWnd = CreateWindow("D3D", "D3D", WS_OVERLAPPEDWINDOW, 100, 100, 300, 300, GetDesktopWindow(), NULL, wc.hInstance, NULL);
-    graphics.Initialized( 500, 500, hInst );
+    graphics.Initialized( 768, 1366, hInst );
     //ShowWindow(hWnd, SW_SHOWDEFAULT);
     //UpdateWindow(hWnd);
     MSG msg;
@@ -46,6 +46,12 @@ LRESULT WINAPI D3D::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_SETCURSOR:
         SetCursor( NULL );
         graphics.GetDevice( )->ShowCursor( true );
+	case WM_MOUSEMOVE:
+	case WM_LBUTTONUP:
+	case WM_LBUTTONDOWN:
+	case WM_KEYUP:
+	case WM_KEYDOWN:
+		graphics.RecvMessages(msg, wParam, lParam, NULL);
         return 0;
     }
     return DefWindowProc(hWnd, msg, wParam, lParam);

@@ -2,6 +2,7 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include "Input.h"
+#include "MainMenu.h"
 #define screenWidth 1600
 #define screenHeight 900
 
@@ -10,6 +11,8 @@ namespace D3D {
     bool InitD3D(HINSTANCE hInstance);
 
     LRESULT CALLBACK MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+
 
     //D3DMATERIAL9 InitMtrl(D3DXCOLOR a, D3DXCOLOR d, D3DXCOLOR s, D3DXCOLOR e, float p);
 
@@ -104,6 +107,7 @@ private:
 	Input * m_Input;
     Sprite* sprt;
     Texture* tex;
+	MainMenu* m_MM;
 public:
 	Keyboard* m_Keyboard;
 	Mouse* m_Mouse;
@@ -112,7 +116,7 @@ public:
 	bool Initialized(int height, int width, HINSTANCE hInstance);
 	void Shutdown();
 	bool Frame();
-
+	void RecvMessages(UINT msg, WPARAM wParam, LPARAM lParam, void * Data);
     bool Render( );
     void BeginScene(float, float, float, float);
 	void EndScene();

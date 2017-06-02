@@ -101,22 +101,22 @@ Texture::Texture(LPDIRECT3DDEVICE9 pDevice)
     rect.right = 500;
     rect.top = 0;
     SetRect( rect );
+	m_Info;
 }
 
-Texture::Texture(LPDIRECT3DDEVICE9 pDevice, LPSTR Path, D3DXVECTOR2 RotationCenter, FLOAT Rotation, D3DXVECTOR2 Translation, D3DXVECTOR2 Scaling, RECT SrcRect)
+Texture::Texture(LPDIRECT3DDEVICE9 pDevice, LPSTR Path, D3DXVECTOR2 RotationCenter, FLOAT Rotation, D3DXVECTOR2 Translation, D3DXVECTOR2 Scaling)
 {
     SetDevice(pDevice);
 	LoadFromFile(Path);
-    InitTexture( RotationCenter,  Rotation,  Translation,  Scaling, SrcRect);
+    InitTexture( RotationCenter,  Rotation,  Translation,  Scaling);
 }
 
-void Texture::InitTexture( D3DXVECTOR2 RotationCenter, FLOAT Rotation, D3DXVECTOR2 Translation, D3DXVECTOR2 Scaling, RECT SrcRect)
+void Texture::InitTexture( D3DXVECTOR2 RotationCenter, FLOAT Rotation, D3DXVECTOR2 Translation, D3DXVECTOR2 Scaling)
 {
     SetRotation(Rotation);
     SetRotationCenter(RotationCenter);
     SetScaling(Scaling);
     SetTranslation(Translation);
-    SetRect(SrcRect);
 }
 
 Texture::~Texture()
@@ -129,7 +129,16 @@ HRESULT Texture::LoadFromFile(LPSTR Path)
 {
     if (m_Texture != NULL)
         m_Texture->Release();
-    return D3DXCreateTextureFromFile(m_pDevice, Path, &m_Texture);
+	if (SUCCEEDED(D3DXGetImageInfoFromFile(Path, &m_Info)))
+	{
+		m_SrcRect.top = 0;
+		m_SrcRect.left = 0;
+		m_SrcRect.bottom = m_Info.Height;
+		m_SrcRect.right = m_Info.Width;
+		return D3DXCreateTextureFromFile(m_pDevice, Path, &m_Texture);
+	}
+
+	return E_FAIL;
 }
 
 ///----------------------------------------------------------------------Sprite Wrapper-------------------------------------------------------------------------------

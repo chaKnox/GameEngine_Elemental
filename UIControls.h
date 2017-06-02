@@ -11,7 +11,7 @@ private:
 public:
 	WindowControl(UIBase* parent, int vecPos);
 	~WindowControl();
-	bool OnRender(WPARAM Key, LPARAM Extended);
+	bool OnRender();
 	void OnMouseDown(int Button, int x, int y);
 	void OnMouseMove(int x, int y);
 	void OnMouseUp(int Button, int x, int y);
@@ -47,6 +47,7 @@ public:
 	char* GetCaption() { return m_Caption; }
 	void SetColor(D3DCOLOR Color) { m_Color = Color; }
 	void SetFormat(DWORD Format) { m_Format = Format; }
+	void OnLostFocus() { return; }
 };
 //-----------------------------------------------------------------Buttons------------------------------------------
 class ButtonControl : public UIBase
@@ -59,7 +60,7 @@ class ButtonControl : public UIBase
 	LPDIRECT3DDEVICE9 m_Device;
 	RECT m_Rect;
 public:
-	ButtonControl(UIBase* parent, int vecPos, LPDIRECT3DDEVICE9 Device);
+	ButtonControl(UIBase* parent, int vecPos, D3DXVECTOR2 Position, LPDIRECT3DDEVICE9 Device);
 	~ButtonControl();
 	bool OnRender();
 	void OnMouseDown(int Button, int x, int y);
@@ -67,8 +68,9 @@ public:
 	void OnMouseUp(int Button, int x, int y);
 	void OnKeyDown(WPARAM Key, LPARAM Extended) { return; }
 	void OnKeyUp(WPARAM Key, LPARAM Extended) { return; }
-	bool SetTextures(char* fileDefault, char* fileOver);
+	bool SetTextures(Texture* fileDefault, Texture* fileOver);
 	void SetCaption(char* Caption);
+	void OnLostFocus();
 };
 #endif // !UICONTROLS_H
 

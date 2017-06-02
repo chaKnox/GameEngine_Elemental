@@ -12,7 +12,8 @@ bool Graphics::Render()
     //begin the scene
     if( SUCCEEDED( m_Device->BeginScene( ) ) )
     {
-        sprt->DrawTexture( tex );
+		m_MM->OnRender();
+        //sprt->DrawTexture( tex );
         //end the scene
         m_Device->EndScene( );
     }
@@ -26,7 +27,7 @@ Graphics::Graphics()
     m_Device = NULL;
     m_D3DInterface = NULL;
     tex = NULL;
-    sprt = NULL;
+    //sprt = NULL;
 }
 
 
@@ -115,9 +116,11 @@ bool Graphics::Initialized(int height, int width, HINSTANCE hInstance)
 	m_Input = new Input(hInstance, hWnd);
 	m_Keyboard = m_Input->CreateKeyboard();
 	m_Mouse = m_Input->CreateMouse(m_Device, false);
-    tex = new Texture( m_Device );
-    tex->LoadFromFile( "Cute_Kitty!.png" );
-    sprt = new Sprite( m_Device );
+	m_MM = new MainMenu(m_Device);
+    //tex = new Texture( m_Device );
+    //tex->LoadFromFile( "Cute_Kitty!.png" );
+    //sprt = new Sprite( m_Device );
+	m_MM->Initialize();
     return TRUE;
 }
 
@@ -136,11 +139,18 @@ void Graphics::Shutdown()
         delete tex;
     if( sprt )
         delete sprt;
+	if (m_MM)
+		delete m_MM;
 }
 
 bool Graphics::Frame()
 {
 	return false;
+}
+
+void Graphics::RecvMessages(UINT msg, WPARAM wParam, LPARAM lParam, void * Data)
+{
+	m_MM->Update(msg, wParam, lParam, Data);
 }
 
 void Graphics::BeginScene(float, float, float, float)
@@ -150,3 +160,9 @@ void Graphics::BeginScene(float, float, float, float)
 void Graphics::EndScene()
 {
 }
+
+D3DLIGHT9 D3D::InitDirectionalLight(D3DXVECTOR3 * direction, D3DXCOLOR * color)
+{
+	return D3DLIGHT9();
+}
+

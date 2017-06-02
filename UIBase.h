@@ -22,7 +22,7 @@ protected:
     UIBase* m_pUIFocus;//this is a pointer to the contol that has the keyboard focus
 public:
     Texture* GetTexture( void ) { return m_Texture; }
-    void SetTexture( Texture* tex ) { m_Texture = tex; }
+	void SetTexture(Texture* tex);
     bool GetVisible( void ) { return m_Visible; }
     void SetVisible( bool isVis ) { m_Visible = isVis; }
 
@@ -45,16 +45,20 @@ public:
 
     virtual void OnKeyDown( WPARAM Key, LPARAM Extended ) = NULL;
     virtual void OnKeyUp( WPARAM key, LPARAM Extended ) = NULL;
+	virtual bool OnRender() = NULL;
+
+	virtual void OnLostFocus() = NULL;
     UIBase* GetFocus( ) { return m_pUIFocus; }
     void SetFocus( UIBase* keyFocus );
 
     bool PostMessage( UINT msg, WPARAM wParam, LPARAM lParam, void* Data );
     UIBase* PostToAll( UINT msg, WPARAM wParam, LPARAM lParam, void* Data );
+	UIBase* PostToAllReverse(UINT msg, WPARAM wParam, LPARAM lParam, void* Data);
 
 	UIBase* GetThis() { return this; }
 	UIBase* GetParentControl( void ) { return m_vControl[ 0 ]; }
 	UIBase( UIBase* parent, int vecPos );
-	UIBase* AddChildControl(UIBase* child) { m_vControl.push_back(child); }
+	UIBase* AddChildControl(UIBase* child);
     ~UIBase( );
 };
 

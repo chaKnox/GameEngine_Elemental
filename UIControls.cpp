@@ -16,7 +16,7 @@ WindowControl::~WindowControl()
 
 }
 
-bool WindowControl::OnRender(WPARAM Key, LPARAM Extended)
+bool WindowControl::OnRender()
 {
 	D3DXVECTOR2 l_ControlAbsPos;
 	l_ControlAbsPos.x = 0;
@@ -25,6 +25,12 @@ bool WindowControl::OnRender(WPARAM Key, LPARAM Extended)
 	GetTexture()->SetTranslation(l_ControlAbsPos);
 	GetSprite()->DrawTexture(GetTexture());
 	GetTexture()->SetTranslation(D3DXVECTOR2{ 0,0 });
+
+	for (int i = 1; i < m_vControl.size(); i++)
+	{
+		m_vControl[i]->OnRender();
+	}
+
 	return true;
 }
 
@@ -55,7 +61,7 @@ void WindowControl::OnMouseUp(int Button, int x, int y)
 {
 	if (m_IsMouseDown && !m_IsParentWindow)
 	{
-		m_IsMouseDown = true;
+		m_IsMouseDown = false;
 	}
 }
 
@@ -96,7 +102,7 @@ LabelControl::LabelControl(UIBase * parent, int vecPos, LOGFONT Font, RECT Rect,
 	m_Color = D3DCOLOR_XRGB(0, 0, 0);
 	m_ColorOver = D3DCOLOR_XRGB(255, 0, 0);
 	m_ColorNULL = D3DCOLOR_XRGB(0, 0, 0);
-	m_Format = DT_CENTER;
+	m_Format = DT_CENTER| DT_VCENTER;
 	m_ButtonLabel = false;
 }
 
@@ -117,10 +123,6 @@ bool LabelControl::OnRender()
 
 void LabelControl::OnMouseDown(int Button, int x, int y)
 {
-	if ((Button == VK_LBUTTON) && (CursorIntersect(float(x), float(y))))
-	{
-		//do something here
-	}
 }
 
 void LabelControl::OnMouseMove(int x, int y)
@@ -147,23 +149,18 @@ void LabelControl::SetCaption(char * Caption)
 		strcpy_s(m_Caption, " ");
 }
 ///--------------------------------------------------------------Buttons-----------------------------------------
-ButtonControl::ButtonControl(UIBase * parent, int vecPos, LPDIRECT3DDEVICE9 Device):UIBase(parent,vecPos)
+ButtonControl::ButtonControl(UIBase * parent, int vecPos, D3DXVECTOR2 Position, LPDIRECT3DDEVICE9 Device):UIBase(parent,vecPos)
 {
 	m_Device = Device;
-	m_DefaultTex = new Texture(m_Device);
-	m_OverTex - new Texture(m_Device);
 	m_Over = false;
 	m_Caption = NULL;
+	m_Position = Position;
+	m_OverTex = NULL;
+	m_DefaultTex = NULL;
 }
 
 ButtonControl::~ButtonControl()
 {
-	if (m_DefaultTex)
-		delete m_DefaultTex;
-	if (m_OverTex)
-		delete m_OverTex;
-	if (m_Texture)
-		delete m_Texture;
 	DeleteObject(m_Font);
 	if (m_Caption)
 		delete m_Caption;
@@ -171,13 +168,8 @@ ButtonControl::~ButtonControl()
 
 bool ButtonControl::OnRender()
 {
-	if (m_Over)
-		SetTexture(m_OverTex);
-	else
-		SetTexture(m_DefaultTex);
-
-	GetSprite()->DrawTexture(m_Texture);
-
+	//GetSprite()->DrawTexture(m_Texture);
+	m_Sprite->DrawTexture(m_Texture);
 	if (m_Caption)
 	{
 		m_Caption->OnRender();
@@ -187,6 +179,8 @@ bool ButtonControl::OnRender()
 
 void ButtonControl::OnMouseDown(int Button, int x, int y)
 {
+	if (CursorIntersect(x, y) && (Button == WM_LBUTTONDOWN))
+		SetCaption("MouseDown");
 }
 
 void ButtonControl::OnMouseMove(int x, int y)
@@ -194,41 +188,45 @@ void ButtonControl::OnMouseMove(int x, int y)
 	if (CursorIntersect(float(x), float(y)))
 	{
 		m_Over = true;
+		SetTexture(m_OverTex);
+		SetCaption("MouseOver");
+		m_Caption->SetColor(D3DCOLOR_XRGB(255, 0, 0));
 	}
 	else
+	{
 		m_Over = false;
-
+		SetTexture(m_DefaultTex);
+		SetCaption("Default");
+		m_Caption->SetColor(D3DCOLOR_XRGB(255, 255, 0));
+	}
 }
 
 void ButtonControl::OnMouseUp(int Button, int x, int y)
 {
+	SetCaption("MouseUP");
 }
 
-bool ButtonControl::SetTextures(char * fileDefault, char * fileOver)
+bool ButtonControl::SetTextures(Texture * fileDefault, Texture * fileOver)
 {
-	D3DXIMAGE_INFO l_Info;
-	if (m_DefaultTex)
+	if (!m_DefaultTex)
 	{
-		if (SUCCEEDED(D3DXGetImageInfoFromFile(fileDefault,&l_Info)))
-		{
-			SetWidthHeight(l_Info.Width, l_Info.Height);
-			if (!SUCCEEDED(m_DefaultTex->LoadFromFile(fileDefault)))
-				return false;
-		}	
+		m_DefaultTex = fileDefault;
+		SetWidthHeight(fileDefault->GetWidth(), fileDefault->GetHeight());
+		m_DefaultTex->SetTranslation(m_Position);
 	}
-	if (m_OverTex)
+	if (!m_OverTex)
 	{
-		if (SUCCEEDED(D3DXGetImageInfoFromFile(fileOver, &l_Info)))
-		{
-			SetWidthHeight(l_Info.Width, l_Info.Height);
-			if (!SUCCEEDED(m_OverTex->LoadFromFile(fileDefault)))
-				return false;
-		}
+		m_OverTex = fileOver;
+		SetWidthHeight(fileOver->GetWidth(), fileOver->GetHeight());
+		m_OverTex->SetTranslation(m_Position);
 	}
-	m_Rect.left = 0;
-	m_Rect.top = 0;
-	m_Rect.right = l_Info.Width;
-	m_Rect.bottom = l_Info.Height;
+	m_Rect.left = m_Position.x;
+	m_Rect.top = m_Position.y;
+	m_Rect.right = m_Position.x + GetWidth();
+	m_Rect.bottom = m_Position.y + GetHeight();
+	m_OverTex->SetRect(m_Rect);
+	m_DefaultTex->SetRect(m_Rect);
+	m_Texture = m_DefaultTex;
 	return true;
 }
 
@@ -241,4 +239,8 @@ void ButtonControl::SetCaption(char * Caption)
 	SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(lf), &lf, 0);
 	m_Caption = new LabelControl(GetThis(), 1, lf, m_Rect, m_Device);
 	m_Caption->SetCaption(Caption);
+}
+
+void ButtonControl::OnLostFocus()
+{
 }

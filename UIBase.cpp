@@ -23,17 +23,22 @@ bool UIBase::PostMessage( UINT msg, WPARAM wParam, LPARAM lParam, void * Data )
 {
     switch( msg )
     {
-    case WM_LBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_LBUTTONDOWN:
         if( CursorIntersect( LOWORD( lParam ), HIWORD( lParam ) ) )
         {
             UIBase* ChildControl = PostToAll( msg, wParam, lParam, Data );
-            if(!ChildControl )
-                OnMouseDown( msg, LOWORD( lParam ), HIWORD( lParam ) );
+			if (!ChildControl)
+			{
+				OnMouseUp(msg, LOWORD(lParam), HIWORD(lParam));
+				OnMouseDown(msg, LOWORD(lParam), HIWORD(lParam));
+			}
             return true;
         }
         else
             return false;
         break;
+
     case WM_MOUSEMOVE:
         if( CursorIntersect( LOWORD( lParam ), HIWORD( lParam ) ) )
         {
@@ -43,8 +48,11 @@ bool UIBase::PostMessage( UINT msg, WPARAM wParam, LPARAM lParam, void * Data )
                 OnMouseMove( LOWORD( lParam ), HIWORD( lParam ) );
             return true;
         }
-        else
-            return false;
+		else
+		{
+			OnMouseMove(LOWORD(lParam), HIWORD(lParam));
+			return false;
+		}
         break;
     case WM_KEYUP:
     case WM_KEYDOWN:
@@ -56,6 +64,11 @@ bool UIBase::PostMessage( UINT msg, WPARAM wParam, LPARAM lParam, void * Data )
                 GetFocus( )->OnKeyDown( wParam, lParam );
         }
         break;
+	case WM_PAINT:
+		OnRender();
+		if (m_vControl.size() > 1)
+			PostToAllReverse(msg, wParam, lParam, Data);
+		break;
     default:
         break;
     }
@@ -64,25 +77,22 @@ bool UIBase::PostMessage( UINT msg, WPARAM wParam, LPARAM lParam, void * Data )
 
 bool UIBase::CursorIntersect( FLOAT x, FLOAT y )
 {
-    D3DXVECTOR2 l_AbsolutPosTR, l_AbsolutPosBL, l_CursorPos;
+    D3DXVECTOR2 l_AbsolutPosTL, l_AbsolutPosBR;
     //variable for the top right corner 
-    l_AbsolutPosTR.x = 0;
-    l_AbsolutPosTR.y = 0;
+	l_AbsolutPosTL.x = 0;
+	l_AbsolutPosTL.y = 0;
 
     //variable for the bottom left corner
-    l_AbsolutPosBL.x = 0;
-    l_AbsolutPosBL.y = 0;
+	l_AbsolutPosBR.x = 0;
+	l_AbsolutPosBR.y = 0;
     
-    //putting the cursor position into a vector
-    l_CursorPos.x = x;
-    l_CursorPos.y = y;
     
-    GetAbsolutePosition( &l_AbsolutPosTR );
-    GetAbsolutePosition( &l_AbsolutPosBL );
-    l_AbsolutPosBL.x += GetWidth( );
-    l_AbsolutPosBL.y += GetHeight( );
+    GetAbsolutePosition( &l_AbsolutPosTL);
+    GetAbsolutePosition( &l_AbsolutPosBR);
+	l_AbsolutPosBR.x += GetWidth( );
+	l_AbsolutPosBR.y += GetHeight( );
 
-    if( (l_CursorPos <= l_AbsolutPosTR) || (l_CursorPos >= l_AbsolutPosBL) )
+    if( ((x >= l_AbsolutPosTL.x) && (x <= l_AbsolutPosBR.x)) && ((y >= l_AbsolutPosTL.y) && (y <= l_AbsolutPosBR.y)))
         return true;
 
     return false;
@@ -90,7 +100,7 @@ bool UIBase::CursorIntersect( FLOAT x, FLOAT y )
 
 UIBase * UIBase::PostToAll( UINT msg, WPARAM wParam, LPARAM lParam, void * Data )
 {
-    for(UINT i=1;i <= m_vControl.size( );i++ )
+    for(UINT i=1;i < m_vControl.size( );i++ )
     {
         if( m_vControl[i]->PostMessage( msg, wParam, lParam, Data ) )
             return m_vControl[ i ];
@@ -98,12 +108,36 @@ UIBase * UIBase::PostToAll( UINT msg, WPARAM wParam, LPARAM lParam, void * Data 
     return NULL;
 }
 
-UIBase::UIBase( UIBase * parent, int vecPos )
+UIBase * UIBase::PostToAllReverse(UINT msg, WPARAM wParam, LPARAM lParam, void * Data)
+{
+	for (UINT i = m_vControl.size()-1; i >0; i--)//goes backwards through the vector excluding the first element which is a pointer to the parent
+	{
+		m_vControl[i]->PostToAllReverse(msg, wParam, lParam, Data);
+	}
+	PostMessage(msg, wParam, lParam, Data);
+	return nullptr;
+}
+
+UIBase::UIBase( UIBase * parent, int vecPos)
 {
 	m_ChildCount = 0;
     m_vControl.clear( );
     m_vControl.push_back( parent );
     m_thisVecPos = vecPos;
+}
+
+UIBase * UIBase::AddChildControl(UIBase * child)
+{
+	m_vControl.push_back(child);//add the child to this controls children
+	child->SetSprite(this->GetSprite());// propagate the sprite to the child
+	return nullptr;
+}
+
+void UIBase::SetTexture(Texture * tex)
+{
+	m_Texture = tex;
+	SetHeight(m_Texture->GetHeight());
+	SetWidth(m_Texture->GetWidth());
 }
 
 void UIBase::GetAbsolutePosition( D3DXVECTOR2 * Position )

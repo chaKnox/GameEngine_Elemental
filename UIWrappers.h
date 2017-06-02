@@ -46,11 +46,12 @@ protected:
     D3DXVECTOR2 m_Translation;
     D3DXVECTOR2 m_Scaling;
     FLOAT m_Rotation;
-    RECT m_SrcRect;
+	D3DXIMAGE_INFO m_Info;
+	RECT m_SrcRect;
 public:
     Texture(LPDIRECT3DDEVICE9 pDevice);
-    Texture(LPDIRECT3DDEVICE9 pDevice, LPSTR Path,  D3DXVECTOR2 RotationCenter, FLOAT Rotation, D3DXVECTOR2 Translation, D3DXVECTOR2 Scaling, RECT SrcRect);
-    void InitTexture( D3DXVECTOR2 RotationCenter, FLOAT Rotation, D3DXVECTOR2 Translation, D3DXVECTOR2 Scaling, RECT SrcRect);
+    Texture(LPDIRECT3DDEVICE9 pDevice, LPSTR Path,  D3DXVECTOR2 RotationCenter, FLOAT Rotation, D3DXVECTOR2 Translation, D3DXVECTOR2 Scaling);
+    void InitTexture( D3DXVECTOR2 RotationCenter, FLOAT Rotation, D3DXVECTOR2 Translation, D3DXVECTOR2 Scaling);
     ~Texture();
     LPDIRECT3DTEXTURE9 GetTexture()const { return m_Texture; }
     void SetTexture(LPDIRECT3DTEXTURE9 Texture) { m_Texture = Texture; }
@@ -67,6 +68,8 @@ public:
     RECT GetRect()const { return m_SrcRect; }
     void SetRect(RECT SrcRect) { m_SrcRect = SrcRect; }
     HRESULT LoadFromFile(LPSTR Path);
+	DWORD GetWidth() { return m_Info.Width; }
+	DWORD GetHeight() { return m_Info.Height; }
 };
 
 class Sprite

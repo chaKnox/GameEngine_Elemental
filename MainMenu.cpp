@@ -2,7 +2,7 @@
 
 
 
-MainMenu::MainMenu(UIBase* parent, int vecPos, LPDIRECT3DDEVICE9 Device):WindowControl(parent,vecPos)
+MainMenu::MainMenu( LPDIRECT3DDEVICE9 Device)
 {
 	m_Init = false;
 	m_Device = Device;
@@ -14,18 +14,47 @@ MainMenu::~MainMenu()
 {
 	if (m_Sprite)
 		delete m_Sprite;
+	if (m_Background)
+		delete m_Background;
+	if (m_ButtonDefault)
+		delete m_ButtonDefault;
+	if (m_ButtonOver)
+		delete m_ButtonOver;
+	if (m_ButtonOver)
+		delete m_ButtonOver;
+	if (wc)
+		delete wc;
 }
 
 bool MainMenu::Initialize()
 {
 	if (!m_Init)
 	{
+		m_Background = new Texture(m_Device, "grey_background.png", D3DXVECTOR2{ 0,0 }, 0, D3DXVECTOR2{ 0,0 }, D3DXVECTOR2{ 1,1 });
+		m_ButtonDefault = new Texture(m_Device, "button.png", D3DXVECTOR2{ 0,0 }, 0, D3DXVECTOR2{ 0,0 }, D3DXVECTOR2{ 1,1 });
+		m_ButtonOver = new Texture(m_Device, "buttonOver.png", D3DXVECTOR2{ 0,0 }, 0, D3DXVECTOR2{ 0,0 }, D3DXVECTOR2{ 1,1 });
+		wc = new WindowControl(NULL, NULL);
+		wc->SetSprite(m_Sprite);
+		wc->SetTexture(m_Background);
 		
-		LoadCanvasFromFile("grey_background.png");
-		ButtonControl* l_TempButton;
-		l_TempButton = new ButtonControl(GetThis(), 1, m_Device);
-		l_TempButton->SetTextures("button.png", "buttonOver.png");
+		ButtonControl* temp;
+		temp = new ButtonControl(wc->GetThis(), 1, D3DXVECTOR2{ 100,100 }, m_Device);
+		temp->SetTextures(m_ButtonDefault, m_ButtonOver);
+		temp->SetCaption("Testing");
+		wc->AddChildControl(temp);
+		m_Init = true;
 	}
-	return false;
+	return m_Init;
+}
+
+void MainMenu::OnRender()
+{
+	wc->OnRender();
+}
+
+void MainMenu::Update(UINT msg, WPARAM wParam, LPARAM lParam, void * Data)
+{
+	//wc->PostMessage(WM_PAINT, wParam, lParam, NULL);
+	wc->PostMessage(msg, wParam, lParam, NULL);
 }
 
