@@ -135,7 +135,8 @@ HRESULT Texture::LoadFromFile(LPSTR Path)
 		m_SrcRect.left = 0;
 		m_SrcRect.bottom = m_Info.Height;
 		m_SrcRect.right = m_Info.Width;
-		return D3DXCreateTextureFromFile(m_pDevice, Path, &m_Texture);
+		return D3DXCreateTextureFromFileEx(m_pDevice, Path, D3DX_DEFAULT_NONPOW2, D3DX_DEFAULT_NONPOW2,
+			D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_DEFAULT, D3DX_DEFAULT, 0, NULL, NULL, &m_Texture);
 	}
 
 	return E_FAIL;

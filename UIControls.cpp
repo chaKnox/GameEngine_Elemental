@@ -23,7 +23,7 @@ bool WindowControl::OnRender()
 	l_ControlAbsPos.y = 0;
 	GetAbsolutePosition(&l_ControlAbsPos);
 	GetTexture()->SetTranslation(l_ControlAbsPos);
-	GetSprite()->DrawTexture(GetTexture());
+	m_Sprite->DrawTexture(GetTexture());
 	GetTexture()->SetTranslation(D3DXVECTOR2{ 0,0 });
 
 	for (int i = 1; i < m_vControl.size(); i++)
@@ -116,7 +116,8 @@ bool LabelControl::OnRender()
 {
 	if (m_Font)
 	{
-		m_Font->DrawText(NULL, m_Caption, strlen(m_Caption), &m_Rect, m_Format, m_Color);
+		RECT l_Temp{ m_Position.x,m_Position.y, m_Position.x + GetWidth(), m_Position.y + GetHeight() };
+		m_Font->DrawText(NULL, m_Caption, strlen(m_Caption), &l_Temp, m_Format, m_Color);
 	}
 	return true;
 }
@@ -157,6 +158,7 @@ ButtonControl::ButtonControl(UIBase * parent, int vecPos, D3DXVECTOR2 Position, 
 	m_Position = Position;
 	m_OverTex = NULL;
 	m_DefaultTex = NULL;
+	
 }
 
 ButtonControl::~ButtonControl()
@@ -220,10 +222,10 @@ bool ButtonControl::SetTextures(Texture * fileDefault, Texture * fileOver)
 		SetWidthHeight(fileOver->GetWidth(), fileOver->GetHeight());
 		m_OverTex->SetTranslation(m_Position);
 	}
-	m_Rect.left = m_Position.x;
-	m_Rect.top = m_Position.y;
-	m_Rect.right = m_Position.x + GetWidth();
-	m_Rect.bottom = m_Position.y + GetHeight();
+	m_Rect.left = 0;
+	m_Rect.top = 0;
+	m_Rect.right =  GetWidth();
+	m_Rect.bottom = GetHeight();
 	m_OverTex->SetRect(m_Rect);
 	m_DefaultTex->SetRect(m_Rect);
 	m_Texture = m_DefaultTex;
@@ -239,6 +241,9 @@ void ButtonControl::SetCaption(char * Caption)
 	SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(lf), &lf, 0);
 	m_Caption = new LabelControl(GetThis(), 1, lf, m_Rect, m_Device);
 	m_Caption->SetCaption(Caption);
+	m_Caption->SetSprite(m_Sprite);
+	m_Caption->SetPosition(m_Position);
+	m_Caption->SetWidthHeight(GetWidth(), GetHeight());
 }
 
 void ButtonControl::OnLostFocus()

@@ -30,7 +30,7 @@ bool MainMenu::Initialize()
 {
 	if (!m_Init)
 	{
-		m_Background = new Texture(m_Device, "grey_background.png", D3DXVECTOR2{ 0,0 }, 0, D3DXVECTOR2{ 0,0 }, D3DXVECTOR2{ 1,1 });
+		m_Background = new Texture(m_Device, "test.png", D3DXVECTOR2{ 0,0 }, 0, D3DXVECTOR2{ 0,0 }, D3DXVECTOR2{ 1,1});
 		m_ButtonDefault = new Texture(m_Device, "button.png", D3DXVECTOR2{ 0,0 }, 0, D3DXVECTOR2{ 0,0 }, D3DXVECTOR2{ 1,1 });
 		m_ButtonOver = new Texture(m_Device, "buttonOver.png", D3DXVECTOR2{ 0,0 }, 0, D3DXVECTOR2{ 0,0 }, D3DXVECTOR2{ 1,1 });
 		wc = new WindowControl(NULL, NULL);
@@ -39,9 +39,9 @@ bool MainMenu::Initialize()
 		
 		ButtonControl* temp;
 		temp = new ButtonControl(wc->GetThis(), 1, D3DXVECTOR2{ 100,100 }, m_Device);
+		wc->AddChildControl(temp);
 		temp->SetTextures(m_ButtonDefault, m_ButtonOver);
 		temp->SetCaption("Testing");
-		wc->AddChildControl(temp);
 		m_Init = true;
 	}
 	return m_Init;
