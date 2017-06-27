@@ -111,6 +111,7 @@ private:
 public:
 	Keyboard* m_Keyboard;
 	Mouse* m_Mouse;
+    Joystick* m_Joystick;
     Graphics();
     ~Graphics();
 	bool Initialized(int height, int width, HINSTANCE hInstance);
