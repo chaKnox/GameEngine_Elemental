@@ -20,8 +20,6 @@ MainMenu::~MainMenu()
 		delete m_ButtonDefault;
 	if (m_ButtonOver)
 		delete m_ButtonOver;
-	if (m_ButtonOver)
-		delete m_ButtonOver;
 	if (wc)
 		delete wc;
 }
@@ -49,6 +47,7 @@ bool MainMenu::Initialize()
 
 void MainMenu::OnRender()
 {
+    
 	wc->OnRender();
 }
 

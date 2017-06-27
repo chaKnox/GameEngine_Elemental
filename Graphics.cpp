@@ -5,7 +5,7 @@ bool Graphics::Render()
 {
     m_Mouse->Update( );
     m_Keyboard->Update( );
-
+    //m_Joystick->Update( );
    //clear back buffer
     m_Device->Clear( 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB( 255, 255, 255 ), 1.0F, 0 );
 
@@ -116,7 +116,8 @@ bool Graphics::Initialized(int height, int width, HINSTANCE hInstance)
 	m_Input = new Input(hInstance, hWnd);
 	m_Keyboard = m_Input->CreateKeyboard();
 	m_Mouse = m_Input->CreateMouse(m_Device, false);
-	m_MM = new MainMenu(m_Device);
+   // m_Joystick = m_Input->CreateJoystick( m_Device, false );
+    m_MM = new MainMenu(m_Device);
     //tex = new Texture( m_Device );
     //tex->LoadFromFile( "Cute_Kitty!.png" );
     //sprt = new Sprite( m_Device );
@@ -131,7 +132,9 @@ void Graphics::Shutdown()
         m_Device->Release();
         m_Device = 0;
     }
-	if (m_Keyboard)
+    if( m_Joystick )
+        delete m_Joystick;
+    if (m_Keyboard)
 		delete m_Keyboard;
 	if (m_Mouse)
 		delete m_Mouse;

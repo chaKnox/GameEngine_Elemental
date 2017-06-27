@@ -40,6 +40,7 @@ bool UIBase::PostMessage( UINT msg, WPARAM wParam, LPARAM lParam, void * Data )
             return false;
         break;
 
+    case MM_JOY1MOVE:
     case WM_MOUSEMOVE:
         if( CursorIntersect( LOWORD( lParam ), HIWORD( lParam ) ) )
         {

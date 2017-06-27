@@ -20,7 +20,7 @@
 
 class Keyboard;
 class Mouse;
-
+class Joystick;
 class Input
 {
 private:
@@ -30,6 +30,7 @@ public:
     Input(HINSTANCE hinst,HWND hWnd);
     Keyboard* CreateKeyboard();
     Mouse* CreateMouse(LPDIRECT3DDEVICE9 pDevice, bool Exclusive);
+    Joystick* CreateJoystick( LPDIRECT3DDEVICE9 pDevice, bool Exclusive );
     ~Input();
 };
 
@@ -69,6 +70,47 @@ public:
     LONG GetYPos( );
     bool IsButtonPressed( int Button );
     HRESULT SetMouseCursor( char* FilePath,UINT x, UINT y,int Type );
+    void SetCursorImage( int Type );
+    void SetCursorPosition( int x, int y );
+    HRESULT SetCursorVisible( bool Show );
+
+};
+///--------------------------------------------------------------------Joystick-------------------------------------------------------------
+class Joystick
+{
+    RECT pos[ 8 ];
+    //Surface* m_Surf;
+    IDirect3DSurface9* m_Cursor;
+    LPDIRECTINPUTDEVICE8 m_pJSDevice;
+    LPDIRECT3DDEVICE9 m_Device;
+    DIJOYSTATE m_JoyState;
+    GUID m_JoystickGUID;
+    LONG m_iX;
+    LONG m_iY;
+    bool m_Changed;
+    bool m_Buttons;
+    int m_Type;
+    char m_Name[ 80 ];
+    static BOOL CALLBACK DI_Enum_Joysticks
+    ( LPCDIDEVICEINSTANCE lpddi,
+      LPVOID DInput_ptr )
+    {
+        Joystick* me = static_cast<Joystick*>(DInput_ptr);
+
+        me->m_JoystickGUID = lpddi->guidInstance;
+        strcpy_s( me->m_Name, (char*)lpddi->tszProductName );
+
+        return (DIENUM_STOP);
+    }
+public:
+    Joystick( LPDIRECT3DDEVICE9 pDevice, LPDIRECTINPUT8 pInput, HWND hWnd,
+           bool Exclusive/*, D3DDISPLAYMODE Mode */ );
+    ~Joystick( );
+    HRESULT Update( );
+    LONG GetXPos( );
+    LONG GetYPos( );
+    bool IsButtonPressed( int Button );
+    HRESULT SetMouseCursor( char* FilePath, UINT x, UINT y, int Type );
     void SetCursorImage( int Type );
     void SetCursorPosition( int x, int y );
     HRESULT SetCursorVisible( bool Show );

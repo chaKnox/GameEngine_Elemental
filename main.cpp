@@ -2,6 +2,7 @@
 #include <d3dx9.h>
 #include "UIWrappers.h"
 #include "Graphics.h"
+#include <Windows.h>
 
 Graphics graphics;
 
@@ -46,7 +47,8 @@ LRESULT WINAPI D3D::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_SETCURSOR:
         SetCursor( NULL );
         graphics.GetDevice( )->ShowCursor( true );
-	case WM_MOUSEMOVE:
+    case MM_JOY1MOVE:
+    case WM_MOUSEMOVE:
 	case WM_LBUTTONUP:
 	case WM_LBUTTONDOWN:
 	case WM_KEYUP:
