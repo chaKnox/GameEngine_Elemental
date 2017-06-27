@@ -1,5 +1,4 @@
 #include "UIBase.h"
-
 #define PARENT 0
 
 
@@ -32,6 +31,8 @@ bool UIBase::PostMessage( UINT msg, WPARAM wParam, LPARAM lParam, void * Data )
 			{
 				OnMouseUp(msg, LOWORD(lParam), HIWORD(lParam));
 				OnMouseDown(msg, LOWORD(lParam), HIWORD(lParam));
+				m_MUClient.BufferIn("Intersect");
+				m_MUClient.Send();
 			}
             return true;
         }
@@ -46,11 +47,13 @@ bool UIBase::PostMessage( UINT msg, WPARAM wParam, LPARAM lParam, void * Data )
             UIBase* ChildControl = PostToAll( msg, wParam, lParam, Data );
             if( !ChildControl )
                 OnMouseMove( LOWORD( lParam ), HIWORD( lParam ) );
-            return true;
+			return true;
         }
 		else
 		{
 			OnMouseMove(LOWORD(lParam), HIWORD(lParam));
+			m_MUClient.BufferIn("Mouse Move");
+			m_MUClient.Send();
 			return false;
 		}
         break;
@@ -120,6 +123,7 @@ UIBase * UIBase::PostToAllReverse(UINT msg, WPARAM wParam, LPARAM lParam, void *
 
 UIBase::UIBase( UIBase * parent, int vecPos)
 {
+	m_MUClient.Initialize();
 	m_ChildCount = 0;
     m_vControl.clear( );
     m_vControl.push_back( parent );

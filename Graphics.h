@@ -118,8 +118,6 @@ public:
 	bool Frame();
 	void RecvMessages(UINT msg, WPARAM wParam, LPARAM lParam, void * Data);
     bool Render( );
-    void BeginScene(float, float, float, float);
-	void EndScene();
 	LPDIRECT3DDEVICE9 GetDevice() { return m_Device; }
 	void GetProjectionMatrix(D3DXMATRIX& projMat) { projMat = m_projectionMatrix; }
 	void GetWorldMatrix(D3DXMATRIX& worldMat) { worldMat = m_worldMatrix; }

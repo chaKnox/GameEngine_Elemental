@@ -153,16 +153,5 @@ void Graphics::RecvMessages(UINT msg, WPARAM wParam, LPARAM lParam, void * Data)
 	m_MM->Update(msg, wParam, lParam, Data);
 }
 
-void Graphics::BeginScene(float, float, float, float)
-{
-}
 
-void Graphics::EndScene()
-{
-}
-
-D3DLIGHT9 D3D::InitDirectionalLight(D3DXVECTOR3 * direction, D3DXCOLOR * color)
-{
-	return D3DLIGHT9();
-}
 

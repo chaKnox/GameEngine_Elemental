@@ -41,8 +41,8 @@ public:
 	void OnMouseDown(int Button, int x, int y);
 	void OnMouseMove(int x, int y);
 	void OnMouseUp(int Button, int x, int y);
-	void OnKeyDown(WPARAM Key, LPARAM Extended) { return; }
-	void OnKeyUp(WPARAM Key, LPARAM Extended) { return; }
+	void OnKeyDown(WPARAM , LPARAM ) { return; }
+	void OnKeyUp(WPARAM, LPARAM) { return; }
 	void SetCaption(char* Caption);
 	char* GetCaption() { return m_Caption; }
 	void SetColor(D3DCOLOR Color) { m_Color = Color; }
@@ -66,8 +66,8 @@ public:
 	void OnMouseDown(int Button, int x, int y);
 	void OnMouseMove(int x, int y);
 	void OnMouseUp(int Button, int x, int y);
-	void OnKeyDown(WPARAM Key, LPARAM Extended) { return; }
-	void OnKeyUp(WPARAM Key, LPARAM Extended) { return; }
+	void OnKeyDown(WPARAM, LPARAM) { return; }
+	void OnKeyUp(WPARAM, LPARAM) { return; }
 	bool SetTextures(Texture* fileDefault, Texture* fileOver);
 	void SetCaption(char* Caption);
 	void OnLostFocus();

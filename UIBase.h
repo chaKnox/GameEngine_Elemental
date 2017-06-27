@@ -5,6 +5,8 @@
 #include <d3dx9.h>
 #include "UIWrappers.h"
 #include <vector>
+#include "Client.h"
+
 
 class UIBase
 {
@@ -20,6 +22,7 @@ protected:
     int m_thisVecPos;//the position of this instance in it's parents control
     bool m_Focus;//is this the focus
     UIBase* m_pUIFocus;//this is a pointer to the contol that has the keyboard focus
+	Client m_MUClient;
 public:
     Texture* GetTexture( void ) { return m_Texture; }
 	void SetTexture(Texture* tex);
