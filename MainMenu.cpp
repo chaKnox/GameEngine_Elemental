@@ -2,10 +2,8 @@
 
 
 
-MainMenu::MainMenu( LPDIRECT3DDEVICE9 Device)
+MainMenu::MainMenu( LPDIRECT3DDEVICE9 Device): StateMachine(Device)
 {
-	m_Init = false;
-	m_Device = Device;
 	m_Sprite = NULL;
 	m_Sprite = new Sprite(m_Device);
 }
@@ -24,7 +22,7 @@ MainMenu::~MainMenu()
 		delete wc;
 }
 
-bool MainMenu::Initialize()
+void MainMenu::Initialize()
 {
 	if (!m_Init)
 	{
@@ -42,18 +40,28 @@ bool MainMenu::Initialize()
 		temp->SetCaption("Testing");
 		m_Init = true;
 	}
-	return m_Init;
 }
 
-void MainMenu::OnRender()
+void MainMenu::Render()
 {
     
 	wc->OnRender();
 }
 
-void MainMenu::Update(UINT msg, WPARAM wParam, LPARAM lParam, void * Data)
+void MainMenu::Exit()
 {
-	//wc->PostMessage(WM_PAINT, wParam, lParam, NULL);
+}
+
+void MainMenu::PostMessage(UINT msg, WPARAM wParam, LPARAM lParam, void * Data)
+{
 	wc->PostMessage(msg, wParam, lParam, NULL);
+}
+
+void MainMenu::Update()
+{
+}
+
+void MainMenu::Enter()
+{
 }
 

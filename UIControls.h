@@ -2,6 +2,7 @@
 #ifndef UICONTROLS_H
 #define UICONTROLS_H
 #include "UIBase.h"
+
 class WindowControl : public UIBase
 {
 private:
@@ -60,6 +61,8 @@ class ButtonControl : public UIBase
 	LPDIRECT3DDEVICE9 m_Device;
 	RECT m_Rect;
 public:
+	int m_OnButtonPress;
+
 	ButtonControl(UIBase* parent, int vecPos, D3DXVECTOR2 Position, LPDIRECT3DDEVICE9 Device);
 	~ButtonControl();
 	bool OnRender();

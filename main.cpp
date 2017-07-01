@@ -1,11 +1,9 @@
 #include <d3d9.h>
 #include <d3dx9.h>
-#include "UIWrappers.h"
-#include "Graphics.h"
 #include <Windows.h>
-
+#include "Graphics.h"
+#include "GameTimer.h"
 Graphics graphics;
-
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT)
 {
     //register the window class
@@ -28,8 +26,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT)
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-       
-            graphics.Render();
+        graphics.Render();
     }
     //UnregisterClass("D3D", wc.hInstance);
     return 0;

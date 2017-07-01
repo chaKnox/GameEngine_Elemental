@@ -26,7 +26,7 @@ bool WindowControl::OnRender()
 	m_Sprite->DrawTexture(GetTexture());
 	GetTexture()->SetTranslation(D3DXVECTOR2{ 0,0 });
 
-	for (int i = 1; i < m_vControl.size(); i++)
+	for (unsigned int i = 1; i < m_vControl.size(); i++)
 	{
 		m_vControl[i]->OnRender();
 	}
@@ -36,7 +36,7 @@ bool WindowControl::OnRender()
 
 void WindowControl::OnMouseDown(int Button, int x, int y)
 {
-	if (!m_IsParentWindow)
+	if (!m_IsParentWindow && (Button == WM_LBUTTONDOWN))
 	{
 		m_MouseClickPos={float(x),float(y)};
 		D3DXVECTOR2 Abs{ 0,0 };
