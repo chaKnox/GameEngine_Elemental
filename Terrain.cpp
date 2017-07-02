@@ -47,7 +47,7 @@ bool Terrain::ComputeVertices()
 	for (int z = l_StartZ; z >= l_EndZ; z -= m_CellSpacing)
 	{
 		int j = 0;
-		for (int x = l_StartX; x >= l_EndX; x += m_CellSpacing)
+		for (int x = l_StartX; x <= l_EndX; x += m_CellSpacing)
 		{
 			//compute the index of the Vertex Buffer/heightmap based on location in nested loop
 			int l_Index = i * m_VertsPerRow + j;
