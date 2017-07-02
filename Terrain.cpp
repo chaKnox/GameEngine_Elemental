@@ -36,7 +36,7 @@ bool Terrain::ComputeVertices()
 	int l_StartZ = m_Depth / 2;
 	//end generating coordinates at:
 	int l_EndX = m_Width / 2;
-	int l_EndZ = m_Depth / 2;
+	int l_EndZ = -m_Depth / 2;
 	//compute texture increment size:
 	float l_UCoordInc = 1.0f / (float)m_CellsPerRow;
 	float l_VCoordInc = 1.0f / (float)m_CellsPerCol;
@@ -47,7 +47,7 @@ bool Terrain::ComputeVertices()
 	for (int z = l_StartZ; z >= l_EndZ; z -= m_CellSpacing)
 	{
 		int j = 0;
-		for (int x = l_StartX; x >= l_EndX; x -= m_CellSpacing)
+		for (int x = l_StartX; x >= l_EndX; x += m_CellSpacing)
 		{
 			//compute the index of the Vertex Buffer/heightmap based on location in nested loop
 			int l_Index = i * m_VertsPerRow + j;
@@ -82,7 +82,7 @@ bool Terrain::ComputeIndices()
 			l_Indeces[l_BaseIndex + 2] = (i + 1)*m_VertsPerRow + j;
 
 			l_Indeces[l_BaseIndex + 3] = (i + 1)*m_VertsPerRow + j;
-			l_Indeces[l_BaseIndex + 4] = i*m_VertsPerRow + 1;
+			l_Indeces[l_BaseIndex + 4] = i*m_VertsPerRow +j+ 1;
 			l_Indeces[l_BaseIndex + 5] = (i + 1)*m_VertsPerRow + j + 1;
 			//next quad
 			l_BaseIndex += 6;
@@ -101,7 +101,7 @@ float Terrain::ComputeShade(int cellRow, int cellCol, D3DXVECTOR3 * directionToL
 
 	// build two vectors on the quad
 	D3DXVECTOR3 l_U((float)m_CellSpacing, (float)l_Height2 - (float)l_Height1, 0.0f);
-	D3DXVECTOR3 l_V(0.0f, (float)l_Height3 - (float)l_Height1, -((float)m_CellSpacing));
+	D3DXVECTOR3 l_V(0.0f, ((float)l_Height3 - (float)l_Height1), -((float)m_CellSpacing));
 
 	D3DXVECTOR3 l_Normal;
 	D3DXVec3Cross(&l_Normal, &l_U, &l_V);
@@ -200,7 +200,7 @@ bool Terrain::GenTexture(D3DXVECTOR3* directionToLight)
 
 	if (FAILED(hr))
 	{
-		::MessageBox(0, "D3DXFilterTexture() - FAILED", 0, 0);
+		::MessageBox(0, "D3DXFilterTexture() - FAILED", 0, MB_SETFOREGROUND );
 		return false;
 	}
 
@@ -231,9 +231,10 @@ bool Terrain::LightTerrain(D3DXVECTOR3* directionToLight)
 			D3DXCOLOR l_Color(l_ImageData[l_Index]);
 
 			float l_Shade = ComputeShade(i, j, directionToLight);
-			l_ImageData[l_Index] = D3DXCOLOR(l_Shade, l_Shade, l_Shade, 1);
+			l_ImageData[l_Index] = D3DXCOLOR(l_Shade, l_Shade, l_Shade, 1.0f);
 		}
 	}
+	m_Texture->UnlockRect(0);
 	return true;
 }
 
@@ -260,7 +261,10 @@ Terrain::Terrain(LPDIRECT3DDEVICE9 device, char * textureFile, char * heightmapF
 	m_NumTriangles = m_CellsPerRow*m_CellsPerCol * 2;
 	//load heightmap
 	if (!ReadRawFile(heightmapFile))
+	{
+		::MessageBox(0, "readRawFile - FAILED", 0, 0);
 		::PostQuitMessage(0);
+	}
 	//scale heights
 	for (int i = m_Heightmap.size() - 1; i >= 0; i--)
 	{
@@ -273,7 +277,7 @@ Terrain::Terrain(LPDIRECT3DDEVICE9 device, char * textureFile, char * heightmapF
 	if (!ComputeIndices())
 		::PostQuitMessage(0);
 
-	GenTexture(&D3DXVECTOR3(0.0f, 1.0f, 0.0f));
+	GenTexture(&D3DXVECTOR3(0.0f, -1.0f, 0.0f));
 
 	if (FAILED(D3DXCreateTextureFromFile(m_Device, textureFile, &m_Texture)))
 	{

@@ -4,6 +4,7 @@
 
 SkyBox::SkyBox(LPDIRECT3DDEVICE9 Device, char* front, char* back, char* left, char* right, char* top, char* bottom)
 {
+	ZeroMemory(&m_VertexBuffer, sizeof(m_VertexBuffer));
 	m_Device = Device;
 	float size = 100;
 	D3D::Vertex_UV l_SkyMesh[24] =
@@ -41,6 +42,12 @@ SkyBox::SkyBox(LPDIRECT3DDEVICE9 Device, char* front, char* back, char* left, ch
 	};
 	if (FAILED(m_Device->CreateVertexBuffer(sizeof(D3D::Vertex_UV) * 24, 0, D3D::FVF, D3DPOOL_MANAGED, &m_VertexBuffer, 0)))
 		MessageBox(NULL, "Skybox VB Create Failed", "Error", MB_OK);
+
+	void* l_pVertices = NULL;
+	m_VertexBuffer->Lock(0, (UINT)sizeof(D3D::Vertex_UV) * 24, (void**)&l_pVertices, 0);
+	memcpy(l_pVertices, l_SkyMesh, sizeof(D3D::Vertex_UV) * 24);
+	m_VertexBuffer->Unlock();
+
 	if (FAILED(D3DXCreateTextureFromFile(m_Device, front, &m_Texture[0])))
 		MessageBox(NULL, "Skybox Texture Front Failed", "Error", MB_OK);
 	if (FAILED(D3DXCreateTextureFromFile(m_Device, back, &m_Texture[1])))
@@ -58,6 +65,16 @@ SkyBox::SkyBox(LPDIRECT3DDEVICE9 Device, char* front, char* back, char* left, ch
 
 SkyBox::~SkyBox()
 {
+	for (int i = 0; i < 6; ++i)
+	{
+		m_Texture[i]->Release();
+		m_Texture[i] = 0;
+	}
+	if (m_VertexBuffer)
+	{
+		m_VertexBuffer->Release();
+		m_VertexBuffer = NULL;
+	}
 }
 
 void SkyBox::Render()

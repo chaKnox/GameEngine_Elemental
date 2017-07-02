@@ -34,7 +34,7 @@ void Gotham::Initialize()
 	m_Device->SetRenderState(D3DRS_LIGHTING, true);
 	m_Device->SetRenderState(D3DRS_SPECULARENABLE, true);
 
-	m_Skybox = new SkyBox(m_Device, "front.png", "back.png", "left.png", "right.png", "top.png", "bottom.png");
+	m_Skybox = new SkyBox(m_Device, "front.png", "back.png", "left.png", "right.png", "top.png", "bottom1.png");
 	m_Terrain = new Terrain(m_Device, "tertex.png", "heightmap.raw", 1025, 1025, 5, 1);
 	m_Camera = new Camera(m_Camera->LANDOBJECT);
 	m_Init = true;
@@ -51,19 +51,18 @@ void Gotham::Enter()
 
 void Gotham::Update()
 {
-	m_Camera->m_Pos.y = m_Terrain->GetHeight(m_Camera->m_Pos.x, m_Camera->m_Pos.z);
-	m_Camera->Update();
+	m_Camera->m_Pos.y = (m_Terrain->GetHeight(m_Camera->m_Pos.x, m_Camera->m_Pos.z)+10);
 }
 
 void Gotham::Render()
 {
 	if (m_Device)
 	{
-		//m_Device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, COLOR_WINDOW, 1.0f, 0);
-		//m_Device->BeginScene();
-		//D3DXMATRIX l_View;
-		//m_Camera->GetViewMatrix(&l_View);
-		//m_Device->SetTransform(D3DTS_VIEW, &l_View);
+		m_Device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, COLOR_WINDOW, 1.0f, 0);
+		m_Device->BeginScene();
+		D3DXMATRIX l_View;
+		m_Camera->GetViewMatrix(&l_View);
+		m_Device->SetTransform(D3DTS_VIEW, &l_View);
 
 		//	render skybox
 		D3DXMATRIX W;
@@ -77,8 +76,10 @@ void Gotham::Render()
 		D3DXMatrixIdentity(&I);
 		m_Terrain->Render(&I, true);
 
-		//m_Device->EndScene();
-		//m_Device->Present(0, 0, 0, 0);
+		m_Camera->Update();
+
+		m_Device->EndScene();
+		m_Device->Present(0, 0, 0, 0);
 	}
 }
 

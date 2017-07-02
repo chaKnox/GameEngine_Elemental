@@ -1,15 +1,32 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <Windows.h>
+#include <iostream>
+
 #include "Graphics.h"
 #include "GameTimer.h"
+
+// Global variables
 Graphics graphics;
+FILE* console_log;
+
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT)
 {
     //register the window class
     //WNDCLASSEX wc = { sizeof(WNDCLASSEX),CS_CLASSDC,D3D::MsgProc,0,0,GetModuleHandle(NULL),NULL,NULL,NULL,NULL,"D3D",NULL };
 
     //RegisterClassEx(&wc);
+
+	// This creates and attaches a console, only enabled in debug builds
+#ifndef NDEBUG
+	AllocConsole();
+	AttachConsole(GetCurrentProcessId());
+	freopen_s(&console_log, "CON", "w", stdout);
+
+	std::cout << "Gotham Debug Console v0.0.1!" << std::endl;
+	std::cout << "Key Legend:" << std::endl;
+	std::cout << "\t 'w','a','s','d' controls car movement" << std::endl;
+#endif
 
     //create teh applications window
     //HWND hWnd = CreateWindow("D3D", "D3D", WS_OVERLAPPEDWINDOW, 100, 100, 300, 300, GetDesktopWindow(), NULL, wc.hInstance, NULL);
@@ -26,6 +43,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT)
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
+		graphics.Update();
         graphics.Render();
     }
     //UnregisterClass("D3D", wc.hInstance);

@@ -78,19 +78,19 @@ bool Graphics::Render()
     m_Keyboard->Update( );
     //m_Joystick->Update( );
    //clear back buffer
-    m_Device->Clear( 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB( 0, 0, 0 ), 1.0F, 0 );
+    //m_Device->Clear( 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB( 0, 0, 255 ), 1.0F, 0 );
 
-    //begin the scene
-    if( SUCCEEDED( m_Device->BeginScene( ) ) )
-    {
+    ////begin the scene
+    //if( SUCCEEDED( m_Device->BeginScene( ) ) )
+    //{
 		//m_MM->Render();
 		m_Gotham->Render();
         //sprt->DrawTexture( tex );
         //end the scene
-        m_Device->EndScene( );
-    }
-    //present the back buffer contents to the display
-    m_Device->Present( NULL, NULL, NULL, NULL );
+    //    m_Device->EndScene( );
+    //}
+    ////present the back buffer contents to the display
+    //m_Device->Present( NULL, NULL, NULL, NULL );
 	return false;
 }
 
