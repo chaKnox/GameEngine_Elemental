@@ -1,6 +1,10 @@
 #include "Graphics.h"
 //#include "UIWrappers.h"
 
+GameTimer g_TickTock;
+
+IDirect3DVertexDeclaration9* D3D::VertexPNT::Decl = 0;
+
 //////-------------------------------------------------------------------------D3D Namespace--------------------------------------------------
 D3DMATERIAL9 D3D::InitMtrl(D3DXCOLOR a, D3DXCOLOR d, D3DXCOLOR s, D3DXCOLOR e, float p)
 {
@@ -109,6 +113,7 @@ Graphics::~Graphics()
 
 bool Graphics::Initialized(int height, int width, HINSTANCE hInstance)
 {
+
     WNDCLASS wc;
 
     wc.style = CS_HREDRAW | CS_VREDRAW ;
@@ -233,4 +238,57 @@ void Graphics::RecvMessages(UINT msg, WPARAM wParam, LPARAM lParam, void * Data)
 {
 	//m_MM->PostMessage(msg, wParam, lParam, Data);
 	m_Gotham->PostMessage(msg, wParam, lParam, Data);
+}
+
+void D3D::BoundingBox::CreateBoundingMesh(LPDIRECT3DDEVICE9 Device)
+{
+	D3DXCreateBox(Device, MAX.x- MIN.x, MAX.y- MIN.y, MAX.z- MIN.z, &m_BoundingMesh, 0);
+}
+
+void D3D::BoundingBox::Render(LPDIRECT3DDEVICE9 Device)
+{
+	D3DMATERIAL9 l_blue = D3D::BLUE_MTRL;
+
+	l_blue.Diffuse.a = 0.10f; // 10% opacity
+
+
+
+	Device->SetMaterial(&l_blue);
+
+	Device->SetTexture(0, 0); // disable texture
+
+
+
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
+
+	Device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+
+	Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+
+
+
+	m_BoundingMesh->DrawSubset(0);
+
+
+
+	Device->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
+}
+
+void D3D::InitVertexPNT(LPDIRECT3DDEVICE9 Device)
+{
+	D3DVERTEXELEMENT9 VertexPNTElements[] =
+	{
+		{ 0, 0,  D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
+		{ 0, 24, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+		D3DDECL_END()
+	};
+	if (FAILED(Device->CreateVertexDeclaration(VertexPNTElements, &VertexPNT::Decl)))
+		MessageBox(NULL, "Graphics: D3D: Vertex Init Failed", "Error", NULL);
+}
+
+void D3D::DestroyVertexPNT()
+{
+	ReleaseCOM(VertexPNT::Decl);
 }

@@ -9,6 +9,8 @@
 // Global variables
 Graphics graphics;
 FILE* console_log;
+enum Event { AUDIO,VEHICLE };
+enum Sounds{CRASH,MUSIC,PICKUP};
 
 INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT)
 {
@@ -16,6 +18,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT)
     //WNDCLASSEX wc = { sizeof(WNDCLASSEX),CS_CLASSDC,D3D::MsgProc,0,0,GetModuleHandle(NULL),NULL,NULL,NULL,NULL,"D3D",NULL };
 
     //RegisterClassEx(&wc);
+
 
 	// This creates and attaches a console, only enabled in debug builds
 #ifndef NDEBUG
@@ -43,6 +46,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT)
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
+		g_TickTock.Tick();
 		graphics.Update();
         graphics.Render();
     }

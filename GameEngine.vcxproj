@@ -79,7 +79,7 @@
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>d3d9.lib;dinput8.lib;dxguid.lib;dxerr.lib;legacy_stdio_definitions.lib;d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;dinput8.lib;xinput.lib;dxguid.lib;dxerr.lib;legacy_stdio_definitions.lib;d3dx9.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -117,6 +117,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AI.cpp" />
+    <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="GameTimer.cpp" />
@@ -125,14 +127,20 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="StateMachine.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="UIBase.cpp" />
     <ClCompile Include="UIControls.cpp" />
     <ClCompile Include="UIWrappers.cpp" />
+    <ClCompile Include="Vehicle.cpp" />
+    <ClCompile Include="Wave.cpp" />
+    <ClCompile Include="XController.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AI.h" />
+    <ClInclude Include="Audio.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="GameTimer.h" />
@@ -140,12 +148,16 @@
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="StateMachine.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="UIBase.h" />
     <ClInclude Include="UIControls.h" />
     <ClInclude Include="UIWrappers.h" />
+    <ClInclude Include="Vehicle.h" />
+    <ClInclude Include="Wave.h" />
+    <ClInclude Include="XController.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

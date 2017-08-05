@@ -1,8 +1,10 @@
 #pragma once
 #ifndef CAMERA_H_
 #define CAMERA_H_
-#include "Graphics.h"
-#include "GameTimer.h"
+#include <d3d9.h>
+#include <d3dx9.h>
+
+class XController;
 class Camera
 {
 public:
@@ -30,13 +32,19 @@ public:
 	void GetLook(D3DXVECTOR3* look) { *look = m_Look; }
 
 	void Update();
+
+	void SetTarget(D3DXVECTOR3 Target) { m_Target = Target; }
 	D3DXVECTOR3 m_Pos;
 private:
 	float speed, strafeSpeed, turnSpeed;
-	GameTimer m_Timer;
 	CameraType  m_CameraType;
 	D3DXVECTOR3 m_Right;
 	D3DXVECTOR3 m_Up;
 	D3DXVECTOR3 m_Look;
+	D3DXVECTOR3 m_Target;
+	D3DXVECTOR3 m_Acceleration;
+	D3DXVECTOR3 m_Velocity;
+	D3DXVECTOR3 m_DistToTarget;
+
 };
 #endif // !CAMERA_H_

@@ -4,25 +4,39 @@
 #include "Input.h"
 #include "MainMenu.h"
 #include "Gotham.h"
+#include "GameTimer.h"
 #define screenWidth 1600
 #define screenHeight 900
+#define ReleaseCOM(x) { if(x){ x->Release();x = 0; } }
+
+extern GameTimer g_TickTock;
 
 namespace D3D {
 
 	LRESULT CALLBACK MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	const D3DCOLOR BLACK(D3DCOLOR_XRGB(0, 0, 0));
-	const D3DCOLOR WHITE(D3DCOLOR_XRGB(255, 255, 255));
-	const D3DXCOLOR RED(D3DCOLOR_XRGB(255, 0, 0));
-	const D3DXCOLOR GREEN(D3DCOLOR_XRGB(0, 255, 0));
-	const D3DXCOLOR YELLOW(D3DCOLOR_XRGB(255, 255, 0));
+	const D3DCOLOR       BLACK(D3DCOLOR_XRGB(0, 0, 0));
+	const D3DCOLOR       WHITE(D3DCOLOR_XRGB(255, 255, 255));
+	const D3DXCOLOR        RED(D3DCOLOR_XRGB(255, 0, 0));
+	const D3DXCOLOR      GREEN(D3DCOLOR_XRGB(0, 255, 0));
+	const D3DXCOLOR       BLUE(D3DCOLOR_XRGB(0, 0, 255));
+	const D3DXCOLOR     YELLOW(D3DCOLOR_XRGB(255, 255, 0));
+	const D3DXCOLOR       CYAN(D3DCOLOR_XRGB(0, 255, 255));
+	const D3DXCOLOR    MAGENTA(D3DCOLOR_XRGB(255, 0, 255));
 
 
 	D3DMATERIAL9 InitMtrl(D3DXCOLOR a, D3DXCOLOR d, D3DXCOLOR s, D3DXCOLOR e, float p);
+	const D3DMATERIAL9 WHITE_MTRL = InitMtrl(WHITE, WHITE, WHITE, WHITE, 2.0f);
+	const D3DMATERIAL9 RED_MTRL = InitMtrl(RED, RED, RED, RED, 2.0f);
+	const D3DMATERIAL9 GREEN_MTRL = InitMtrl(GREEN, GREEN, GREEN, GREEN, 2.0f);
+	const D3DMATERIAL9 BLUE_MTRL = InitMtrl(BLUE, BLUE, BLUE, BLUE, 2.0f);
+	const D3DMATERIAL9 YELLOW_MTRL = InitMtrl(YELLOW, YELLOW, YELLOW, YELLOW, 2.0f);
+	const D3DMATERIAL9 BLACK_MTRL = InitMtrl(BLACK, BLACK, BLACK, BLACK, 2.0f);
 
 	D3DLIGHT9 InitDirectionalLight(D3DXVECTOR3* direction, D3DXCOLOR* color);
 	D3DLIGHT9 InitPointLight(D3DXVECTOR3* position, D3DXCOLOR* color);
 	D3DLIGHT9 InitSpotLight(D3DXVECTOR3* position, D3DXVECTOR3* direction, D3DXCOLOR* color);
+
 
 
 	 //	lerp for terrain interpolation
@@ -37,7 +51,33 @@ namespace D3D {
 		float x, y, z, u, v;
 	};
 
+	struct VertexPNT
+	{
+		VertexPNT()
+			:pos(0.0f, 0.0f, 0.0f),
+			normal(0.0f, 0.0f, 0.0f),
+			tex0(0.0f, 0.0f) {}
+		VertexPNT(float x, float y, float z,
+			float nx, float ny, float nz,
+			float u, float v) :pos(x, y, z), normal(nx, ny, nz), tex0(u, v) {}
+		VertexPNT(const D3DXVECTOR3& v, const D3DXVECTOR3& n, const D3DXVECTOR2& uv)
+			:pos(v), normal(n), tex0(uv) {}
+
+		D3DXVECTOR3 pos;
+		D3DXVECTOR3 normal;
+		D3DXVECTOR2 tex0;
+		LPDIRECT3DDEVICE9 m_Device;
+
+		static IDirect3DVertexDeclaration9* Decl;
+	};
+
+	void InitVertexPNT(LPDIRECT3DDEVICE9 Device);
+	void DestroyVertexPNT();
+
 	struct BoundingBox {
+		ID3DXMesh* m_BoundingMesh;
+		D3DXVECTOR3 MIN, MAX;
+
 		BoundingBox() : MIN(INFINITY, INFINITY, INFINITY), MAX(-INFINITY, -INFINITY, -INFINITY) {}
 
 		D3DXVECTOR3 center() {
@@ -45,8 +85,8 @@ namespace D3D {
 		}
 
 		bool isPointInside(D3DXVECTOR3 &p);
-
-		D3DXVECTOR3 MIN, MAX;
+		void CreateBoundingMesh(LPDIRECT3DDEVICE9 Device);
+		void Render(LPDIRECT3DDEVICE9 Device);
 	};
 
 

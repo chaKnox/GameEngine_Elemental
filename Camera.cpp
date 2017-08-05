@@ -1,19 +1,22 @@
 #include "Camera.h"
-
+#include "Graphics.h"
+#include "XController.h"
 
 
 Camera::Camera()
 {
-	speed = 50.0f;
-	strafeSpeed = 50.0f;
+	speed = 100.0f;
+	strafeSpeed = 100.0f;
 	turnSpeed = 2.0f;
-	
-	m_CameraType = AIRCRAFT;
 
+	m_CameraType = AIRCRAFT;
+	m_Acceleration = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_Target = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_Pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_Right = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
 	m_Up = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	m_Look = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
+	m_DistToTarget = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 }
 
 Camera::Camera(CameraType cameraType)
@@ -21,7 +24,8 @@ Camera::Camera(CameraType cameraType)
 	speed = 50.0f;
 	strafeSpeed = 50.0f;
 	turnSpeed = 2.0f;
-	
+	//m_Controller = new XController();
+
 	m_CameraType = cameraType;
 
 	m_Pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -33,6 +37,7 @@ Camera::Camera(CameraType cameraType)
 
 Camera::~Camera()
 {
+	//delete m_Controller;
 }
 
 void Camera::Strafe(float units)
@@ -126,29 +131,51 @@ void Camera::GetViewMatrix(D3DXMATRIX * V)
 
 void Camera::Update()
 {
-	m_Timer.Tick();
-	if (GetAsyncKeyState(VK_RIGHT) & 0x8000f) {
-		Yaw(m_Timer.DeltaTime()* turnSpeed);
+	if (m_CameraType != CAR)
+	{
+		g_TickTock.Tick();
+		if (GetAsyncKeyState(VK_RIGHT) & 0x8000f) {
+			Yaw(g_TickTock.DeltaTime()* turnSpeed);
+		}
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000f) {
+			Yaw(-g_TickTock.DeltaTime() * turnSpeed);
+		}
+		if (GetAsyncKeyState(VK_UP) & 0x8000f) {
+			Pitch(-g_TickTock.DeltaTime()* turnSpeed);
+		}
+		if (GetAsyncKeyState(VK_DOWN) & 0x8000f) {
+			Pitch(g_TickTock.DeltaTime() * turnSpeed);
+		}
+		if (GetAsyncKeyState('W') & 0x8000f) {
+			Walk(g_TickTock.DeltaTime() * speed);
+		}
+		if (GetAsyncKeyState('S') & 0x8000f) {
+			Walk(-g_TickTock.DeltaTime() * speed);
+		}
+		if (GetAsyncKeyState('A') & 0x8000f) {
+			Strafe(-g_TickTock.DeltaTime() * strafeSpeed);
+		}
+		if (GetAsyncKeyState('D') & 0x8000f) {
+			Strafe(g_TickTock.DeltaTime() * strafeSpeed);
+		}
 	}
-	if (GetAsyncKeyState(VK_LEFT) & 0x8000f) {
-		Yaw(-m_Timer.DeltaTime() * turnSpeed);
-	}
-	if (GetAsyncKeyState(VK_UP) & 0x8000f) {
-		Pitch(-m_Timer.DeltaTime()* turnSpeed);
-	}
-	if (GetAsyncKeyState(VK_DOWN) & 0x8000f) {
-		Pitch(m_Timer.DeltaTime() * turnSpeed);
-	}
-	if (GetAsyncKeyState('W') & 0x8000f) {
-		Walk(m_Timer.DeltaTime() * speed);
-	}
-	if (GetAsyncKeyState('S') & 0x8000f) {
-		Walk(-m_Timer.DeltaTime() * speed);
-	}
-	if (GetAsyncKeyState('A') & 0x8000f) {
-		Strafe(-m_Timer.DeltaTime() * strafeSpeed);
-	}
-	if (GetAsyncKeyState('D') & 0x8000f) {
-		Strafe(m_Timer.DeltaTime() * strafeSpeed);
+	else
+	{
+		if (D3DXVec3Length(&m_DistToTarget) > 10)
+		{
+			D3DXVec3Add(&m_Velocity, &m_Look, &m_Acceleration);
+			D3DXVec3Add(&m_Pos, &m_Pos, &m_Look);
+			m_Acceleration = D3DXVECTOR3(0, 0, 0);
+
+			D3DXVECTOR3 l_NormVec{ 0,0,0 };
+			D3DXVec3Subtract(&m_DistToTarget, &m_Target, &m_Pos);
+			D3DXVec3Normalize(&l_NormVec, &m_DistToTarget);
+			l_NormVec *= speed;
+			m_Acceleration = l_NormVec;
+
+			D3DXVECTOR3 l_Steer{ 0,0,0 };
+			D3DXVec3Subtract(&l_Steer, &l_NormVec, &m_Look);
+			D3DXVec3Add(&m_Acceleration, &m_Acceleration, &l_Steer);
+		}
 	}
 }
